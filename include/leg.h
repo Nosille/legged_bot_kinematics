@@ -31,7 +31,7 @@ class Leg
        );
     
     // Methods
-    void getAnglesFromPoint(const Eigen::Vector3d &_point, double (&_angles)[4]);
+    void getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles);
     void getPointFromAngles(std::map<std::string, double> &_angles, Eigen::Vector3d &_point);
 
     std::map<std::string, double> getAnglesFromPoint(const Eigen::Vector3d &_point);

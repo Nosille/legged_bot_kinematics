@@ -24,14 +24,19 @@ Leg::Leg(const std::string &_name,
 
 /// @brief Inverse Kinematics
 /// @param _point x, y, z coordinates of foot in body coordinate system 
-/// @param _angles return array of doubles containing joint angles in radians (coxa, femur, tibia, tarsus) 
-void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, double (&_angles)[4])
+/// @param _angles return vector of doubles containing joint angles in radians (coxa, femur, tibia, tarsus) 
+void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles)
 {
   // lengths of each link
   double coxa_length = lengths_[0];
   double femur_length = lengths_[1];
   double tibia_length = lengths_[2];
   double tarsus_length = lengths_[3];
+
+  ROS_INFO_STREAM("coxa length = " << coxa_length);
+  ROS_INFO_STREAM("femur length = " << femur_length);
+  ROS_INFO_STREAM("tibia length = " << tibia_length);
+  ROS_INFO_STREAM("tarsus length = " << tarsus_length);
 
   // Transform from body coordinate system to leg coordinate system
   Eigen::Vector3d point;
@@ -61,25 +66,33 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, double (&_angles)[4]
   ROS_INFO_STREAM("zr = " << zr);
 
   // Calculate joint angles for remaining two joints (tibia and femur) 
-  // that yield the desired tibia-tarsus joint position
-  double tibia_angle = (yr*yr) + (zr*zr) - (femur_length*femur_length) - (tibia_length*tibia_length);
-  tibia_angle /= 2 * femur_length * tibia_length;
-  tibia_angle = -1 * acos(tibia_angle);
+  // Law of cosines can be used to find angle between femur and tibia
+  double tibia_numerator = (yr*yr) + (zr*zr) - (femur_length*femur_length) - (tibia_length*tibia_length);
+  double tibia_denominator = 2 * femur_length * tibia_length;
+  double tibia_angle = - acos(tibia_numerator / tibia_denominator);
 
-  double femur_numerator = tibia_length * sin(tibia_angle);
-  double femur_denominator = femur_length + tibia_length * cos(tibia_angle);
-  double femur_angle = -1 * atan(femur_numerator / femur_denominator);
+  
+
+  // double femur_numerator = tibia_length * sin(tibia_angle);
+  // double femur_denominator = femur_length + tibia_length * cos(tibia_angle);
+  // ROS_INFO_STREAM("numerator = " << femur_numerator);
+  // ROS_INFO_STREAM("denominator = " << femur_denominator);
+  // double femur_angle = -1 * atan(femur_numerator / femur_denominator);
+  // ROS_INFO_STREAM("beta = " << femur_angle);
+  // ROS_INFO_STREAM("gamma = " << atan(zr/yr));
   femur_angle += atan(zr/yr);
+
 
   // Calculate tarsus joint angle required to make tarsus link vertical
   // now that we have the other angles
   double tarsus_angle = -1.5707963267948968 + femur_angle + tibia_angle;
 
   // Add results to map
-  _angles[0] = coxa_angle;
-  _angles[1] = femur_angle;
-  _angles[2] = tibia_angle;
-  _angles[3] = tarsus_angle;
+  _angles.clear();
+  _angles.push_back(coxa_angle);
+  _angles.push_back(femur_angle);
+  _angles.push_back(tibia_angle);
+  _angles.push_back(tarsus_angle);
 }
 
 /// @brief Inverse Kinematics
@@ -88,7 +101,7 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, double (&_angles)[4]
 std::map<std::string, double> Leg::getAnglesFromPoint(const Eigen::Vector3d &_point)
 {
   // Get angles
-  double angles[4];
+  std::vector<double> angles;
   getAnglesFromPoint(_point, angles);    
 
   // Add results to map
