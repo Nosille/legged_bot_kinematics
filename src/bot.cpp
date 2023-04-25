@@ -82,8 +82,15 @@ Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<
     lengths[3] = tarsusLength;
 
     Leg leg(legId, origin, lengths);
-    legs_.insert({legId, leg});
+    legs_.push_back(leg);
   }
+}
+
+std::vector<double> Bot::set_leg_position(int _index, Eigen::Vector3d &_point)
+{
+  std::vector<double> angles;
+  legs_[_index-1].getAnglesFromPoint(_point, angles);
+  return angles;
 }
 
 bool Bot::getTransform(geometry_msgs::TransformStamped &_transform, const std::string &_target_frame, const std::string &_source_frame, const ros::Time &_time, const ros::Duration &_wait_for_tf_delay)

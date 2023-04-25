@@ -28,7 +28,8 @@ class Bot
     Bot(const std::string &_name, const std::string &_frameId, const std::list<std::string> &_legIds, const double wait_for_tf_delay);
 
     // Methods
-    void set_leg_position(std::string _id, Eigen::Vector3d &_point);
+    // std::vector<double> set_leg_position(std::string _id, Eigen::Vector3d &_point);
+    std::vector<double> set_leg_position(int _index, Eigen::Vector3d &_point);
     
     std::string getName() const;
 
@@ -45,7 +46,7 @@ class Bot
     // Global Variables
     std::string name_;
     std::string frame_id_;
-    std::map<std::string, Leg> legs_;
+    std::vector<Leg> legs_;
 
     // Methods
     bool getTransform(geometry_msgs::TransformStamped &_transform, const std::string &_target_frame, const std::string &_source_frame, const ros::Time &_time, const ros::Duration &_wait_for_tf_delay);
