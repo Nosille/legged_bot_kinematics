@@ -27,16 +27,18 @@ Leg::Leg(const std::string &_name,
 /// @param _angles return vector of doubles containing joint angles in radians (coxa, femur, tibia, tarsus) 
 void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles)
 {
+  _angles.clear();
+  
   // lengths of each link
   double coxa_length = lengths_[0];
   double femur_length = lengths_[1];
   double tibia_length = lengths_[2];
   double tarsus_length = lengths_[3];
 
-  ROS_INFO_STREAM("coxa length = " << coxa_length);
-  ROS_INFO_STREAM("femur length = " << femur_length);
-  ROS_INFO_STREAM("tibia length = " << tibia_length);
-  ROS_INFO_STREAM("tarsus length = " << tarsus_length);
+  // ROS_INFO_STREAM("coxa length = " << coxa_length);
+  // ROS_INFO_STREAM("femur length = " << femur_length);
+  // ROS_INFO_STREAM("tibia length = " << tibia_length);
+  // ROS_INFO_STREAM("tarsus length = " << tarsus_length);
 
   // Transform from body coordinate system to leg coordinate system
   Eigen::Vector3d point;
@@ -52,46 +54,46 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
 
   // Coxa angle can be calculated at this point
   double coxa_angle = yaw - origin_[3];
-
+  _angles.push_back(coxa_angle);
+  
   ROS_INFO_STREAM("xp = " << vector[0]);
   ROS_INFO_STREAM("yp = " << vector[1]);
   ROS_INFO_STREAM("zp = " << vector[2]);
 
+  // Select tarsus slope
+  double tarsus_slope = -PI/2;
+
   // Calculate position of tibia-tarsus joint 
-  // assuming coxa is horizontal and tarsus is vertical
-  double yr = abs(vector[1]) - coxa_length;
-  double zr = vector[2] + tarsus_length;
+  // assuming coxa is horizontal and tarsus is at selected slope
+  double yr = abs(vector[1]) - coxa_length - tarsus_length * cos(tarsus_slope);
+  double zr = vector[2] - tarsus_length * sin(tarsus_slope);
 
   ROS_INFO_STREAM("yr = " << yr);
   ROS_INFO_STREAM("zr = " << zr);
 
-  // Calculate joint angles for remaining two joints (tibia and femur) 
-  // Law of cosines can be used to find angle between femur and tibia
-  double tibia_numerator = (yr*yr) + (zr*zr) - (femur_length*femur_length) - (tibia_length*tibia_length);
+  // Form a triangle from the coxa-femur, femur-tibia, and tibia-tarsus joints
+  // we can use the law of cosines to find its internal angles
+ 
+  // length and slope of coxa-femur to tibia-tarsus edge
+  double hyp = sqrt((yr*yr) + (zr*zr));
+  double angle = atan(zr/yr);
+
+  // femur joint
+  double femur_numerator = (femur_length*femur_length) + (hyp*hyp) - (tibia_length*tibia_length);
+  double femur_denominator = 2 * femur_length * hyp;
+  double femur_angle = acos(femur_numerator / femur_denominator);
+  ROS_INFO_STREAM("beta = " << femur_angle);
+  femur_angle += angle;
+  _angles.push_back(femur_angle);
+  
+  // tibia joint
+  double tibia_numerator = (hyp*hyp) - (femur_length*femur_length) - (tibia_length*tibia_length);
   double tibia_denominator = 2 * femur_length * tibia_length;
   double tibia_angle = - acos(tibia_numerator / tibia_denominator);
-
-  
-
-  // double femur_numerator = tibia_length * sin(tibia_angle);
-  // double femur_denominator = femur_length + tibia_length * cos(tibia_angle);
-  // ROS_INFO_STREAM("numerator = " << femur_numerator);
-  // ROS_INFO_STREAM("denominator = " << femur_denominator);
-  // double femur_angle = -1 * atan(femur_numerator / femur_denominator);
-  // ROS_INFO_STREAM("beta = " << femur_angle);
-  // ROS_INFO_STREAM("gamma = " << atan(zr/yr));
-  femur_angle += atan(zr/yr);
-
-
-  // Calculate tarsus joint angle required to make tarsus link vertical
-  // now that we have the other angles
-  double tarsus_angle = -1.5707963267948968 + femur_angle + tibia_angle;
-
-  // Add results to map
-  _angles.clear();
-  _angles.push_back(coxa_angle);
-  _angles.push_back(femur_angle);
   _angles.push_back(tibia_angle);
+
+  // tarsus joint
+  double tarsus_angle = tarsus_slope - femur_angle - tibia_angle;
   _angles.push_back(tarsus_angle);
 }
 
@@ -151,31 +153,31 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
     coxa_angle += coxa_index->second; 
     ROS_INFO_STREAM("yaw = " << coxa_angle);   
 
-  double femur_angle  = 0.0;
+  double femur_slope  = 0.0;
   auto femur_index = _angles.find("femur");
   if (femur_index != _angles.end()) 
-    femur_angle += femur_index->second; 
+    femur_slope += femur_index->second; 
 
-  double tibia_angle  = femur_angle;
+  double tibia_slope  = femur_slope;
   auto tibia_index = _angles.find("tibia");
   if (tibia_index != _angles.end()) 
-    tibia_angle += tibia_index->second;  
+    tibia_slope += tibia_index->second;  
 
-  double tarsus_angle = tibia_angle; 
+  double tarsus_slope = tibia_slope; 
   auto tarsus_index = _angles.find("tarsus");
   if (tarsus_index != _angles.end()) 
-    tarsus_angle += tarsus_index->second;
+    tarsus_slope += tarsus_index->second;
 
   // Position of foot relative to connection to robot at coxa
   double yp = coxa_length + 
-              femur_length*cos(femur_angle) + 
-              tibia_length*cos(tibia_angle) +
-              tarsus_length*cos(tarsus_angle);
+              femur_length*cos(femur_slope) + 
+              tibia_length*cos(tibia_slope) +
+              tarsus_length*cos(tarsus_slope);
 
   double zp = 0.0 + 
-              femur_length*sin(femur_angle) + 
-              tibia_length*sin(tibia_angle) +
-              tarsus_length*sin(tarsus_angle);
+              femur_length*sin(femur_slope) + 
+              tibia_length*sin(tibia_slope) +
+              tarsus_length*sin(tarsus_slope);
 
   ROS_INFO_STREAM("yp = " << yp);    
   ROS_INFO_STREAM("zp = " << zp);    
