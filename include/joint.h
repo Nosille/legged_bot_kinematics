@@ -2,24 +2,14 @@
 
 
 #include <vector>
-#include <list>
-#include <map> 
-#include <mutex>
+
 #include <string>
 #include <iterator>
 #include <algorithm>
 
-#include <ros/ros.h>
-#include <ros/console.h>
-#include <std_srvs/Empty.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <Eigen/Geometry> 
 
-#include <geometry_msgs/TransformStamped.h>
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Pose.h>
-
+/// @brief Class defining joint for legged robot
 class Joint
 {
   public:

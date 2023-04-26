@@ -2,12 +2,12 @@
 
 
 #include <vector>
-#include <list>
 #include <map> 
-#include <mutex>
 #include <string>
 #include <iterator>
 #include <algorithm>
+
+#include <Eigen/Geometry> 
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -22,6 +22,7 @@
 
 #include "leg.h"
 
+/// @brief Class defining multilegged robot
 class Bot
 {
   public:

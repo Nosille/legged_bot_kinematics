@@ -1,11 +1,3 @@
-#include <iostream>
-#include <pybind11/pybind11.h>
-#include <pybind11/embed.h>
-#include <pybind11/stl.h>
-#include <pybind11/eigen.h>
-
-#include <Eigen/LU>
-
 #include "leg.h"
 
 /// @brief Constructor for Leg using eigen vectors
@@ -22,6 +14,7 @@ Leg::Leg(const std::string &_name,
   lengths_ = _lengths;
 }
 
+
 /// @brief Inverse Kinematics
 /// @param _point x, y, z coordinates of foot in body coordinate system 
 /// @param _angles return vector of doubles containing joint angles in radians (coxa, femur, tibia, tarsus) 
@@ -35,18 +28,12 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   double tibia_length = lengths_[2];
   double tarsus_length = lengths_[3];
 
-  // ROS_INFO_STREAM("coxa length = " << coxa_length);
-  // ROS_INFO_STREAM("femur length = " << femur_length);
-  // ROS_INFO_STREAM("tibia length = " << tibia_length);
-  // ROS_INFO_STREAM("tarsus length = " << tarsus_length);
-
   // Transform from body coordinate system to leg coordinate system
   Eigen::Vector3d point;
   point[0] = _point[0] - origin_[0];
   point[1] = _point[1] - origin_[1];
   point[2] = _point[2] - origin_[2];
   double yaw = -atan(point[0]/point[1]);
-  ROS_INFO_STREAM("yaw = " << yaw);
 
   Eigen::Quaternion<double> q;
   q = Eigen::AngleAxis<double>(yaw, Eigen::Vector3d(0.0, 0.0, 1.0));
@@ -55,10 +42,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   // Coxa angle can be calculated at this point
   double coxa_angle = yaw - origin_[3];
   _angles.push_back(coxa_angle);
-  
-  ROS_INFO_STREAM("xp = " << vector[0]);
-  ROS_INFO_STREAM("yp = " << vector[1]);
-  ROS_INFO_STREAM("zp = " << vector[2]);
 
   // Select tarsus slope
   double tarsus_slope = -PI/2;
@@ -67,9 +50,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   // assuming coxa is horizontal and tarsus is at selected slope
   double yr = abs(vector[1]) - coxa_length - tarsus_length * cos(tarsus_slope);
   double zr = vector[2] - tarsus_length * sin(tarsus_slope);
-
-  ROS_INFO_STREAM("yr = " << yr);
-  ROS_INFO_STREAM("zr = " << zr);
 
   // Form a triangle from the coxa-femur, femur-tibia, and tibia-tarsus joints
   // we can use the law of cosines to find its internal angles
@@ -82,7 +62,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   double femur_numerator = (femur_length*femur_length) + (hyp*hyp) - (tibia_length*tibia_length);
   double femur_denominator = 2 * femur_length * hyp;
   double femur_angle = acos(femur_numerator / femur_denominator);
-  ROS_INFO_STREAM("beta = " << femur_angle);
   femur_angle += angle;
   _angles.push_back(femur_angle);
   
@@ -116,23 +95,6 @@ std::map<std::string, double> Leg::getAnglesFromPoint(const Eigen::Vector3d &_po
   return map;
 }
 
-/// @brief Inverse Kinematics
-/// @param _point x, y, z coordinates of foot in body coordinate system
-/// @return python dictionary containing angles for each named joint (coxa, femur, tibia, tarsus)
-pybind11::dict Leg::getAnglesFromPointPy(const Eigen::Vector3d &_point)
-{
-  std::map<std::string, double> map;
-  map = getAnglesFromPoint(_point);
-  
-  pybind11::dict dict;
-
-  for (auto item : map)
-  {
-    dict[pybind11::cast(item.first)] = item.second;
-  }
-
-  return dict;
-}
 
 /// @brief Forward Kinematics
 /// @param _angles map containing angles for each named joint (coxa, femur, tibia, tarsus)
@@ -151,7 +113,6 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
   auto coxa_index = _angles.find("coxa");
   if (coxa_index != _angles.end()) 
     coxa_angle += coxa_index->second; 
-    ROS_INFO_STREAM("yaw = " << coxa_angle);   
 
   double femur_slope  = 0.0;
   auto femur_index = _angles.find("femur");
@@ -178,9 +139,6 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
               femur_length*sin(femur_slope) + 
               tibia_length*sin(tibia_slope) +
               tarsus_length*sin(tarsus_slope);
-
-  ROS_INFO_STREAM("yp = " << yp);    
-  ROS_INFO_STREAM("zp = " << zp);    
   
   // Create tranform from leg origin to end of leg
   if (origin_[1] < 0) yp *= -1;
@@ -195,25 +153,6 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
   _point[2] = origin_[2] + point[2];
 }
 
-/// @brief Forward Kinematics
-/// @param dict python dictionary containing angles for each named joint (coxa, femur, tibia, tarsus)
-/// @return vector containing x, y, z coordinates of foot in body coordinate system
-Eigen::Vector3d Leg::getPointFromAnglesPy(const pybind11::dict &_dict)
-{
-  // Convert dict to map
-  std::map<std::string,double> map;
-  for (auto item : _dict)
-  {
-    auto key = item.first.cast<std::string>();
-    auto value = item.second.cast<double>();
-    map[key] = value;
-  }
-
-  // Get point
-  Eigen::Vector3d point;
-  getPointFromAngles(map, point);
-  return point;
-}
 
 /// @brief Get name of Leg
 /// @return name of leg

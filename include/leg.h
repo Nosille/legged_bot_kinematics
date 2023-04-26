@@ -2,26 +2,16 @@
 
 
 #include <vector>
-#include <list>
 #include <map> 
-#include <mutex>
 #include <string>
 #include <iterator>
 #include <algorithm>
 
-#include <ros/ros.h>
-#include <ros/console.h>
-#include <std_srvs/Empty.h>
-#include <tf2_ros/transform_listener.h>
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
-#include <geometry_msgs/TransformStamped.h>
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Pose.h>
+#include <Eigen/Geometry> 
 
 #include "joint.h"
 
+/// @brief Class defining leg for multilegged robot
 class Leg
 {
   public:
@@ -35,8 +25,6 @@ class Leg
     void getPointFromAngles(std::map<std::string, double> &_angles, Eigen::Vector3d &_point);
 
     std::map<std::string, double> getAnglesFromPoint(const Eigen::Vector3d &_point);
-    pybind11::dict getAnglesFromPointPy(const Eigen::Vector3d &_point);
-    Eigen::Vector3d getPointFromAnglesPy(const pybind11::dict &_dict);
 
     std::string getName() const;
     Eigen::Vector4d getOrigin() const;

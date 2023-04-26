@@ -1,12 +1,3 @@
-#include <iostream>
-#include <cassert>
-#include <pybind11/pybind11.h>
-#include <pybind11/embed.h>
-#include <pybind11/stl.h>
-#include <pybind11/eigen.h>
-
-#include <Eigen/LU>
-
 #include "bot.h"
 
 Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<std::string> &_legIds, const double _wait_for_tf_delay = 10)
