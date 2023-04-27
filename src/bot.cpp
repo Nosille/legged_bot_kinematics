@@ -24,15 +24,15 @@ Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<
 
     // Find transforms
     geometry_msgs::TransformStamped center, coxa, femur, tibia, tarsus;
-    assert(getTransform(center, coxaFrame, bodyFrame, ros::Time(), ros::Duration(wait_for_tf_delay_)));
-    assert(getTransform(coxa, femurFrame, coxaFrame, ros::Time(), ros::Duration(0.0)));
-    assert(getTransform(femur, tibiaFrame, femurFrame, ros::Time(), ros::Duration(0.0)));
-    if(!getTransform(tibia, tarsusFrame, tibiaFrame, ros::Time(), ros::Duration(0.0)))
+    assert(getTransform(center, bodyFrame, coxaFrame, ros::Time(), ros::Duration(wait_for_tf_delay_)));
+    assert(getTransform(coxa, coxaFrame, femurFrame, ros::Time(), ros::Duration(0.0)));
+    assert(getTransform(femur, femurFrame, tibiaFrame, ros::Time(), ros::Duration(0.0)));
+    if(!getTransform(tibia, tibiaFrame, tarsusFrame, ros::Time(), ros::Duration(0.0)))
     {
-      assert(getTransform(tibia, endFrame, tibiaFrame, ros::Time(), ros::Duration(0.0)));
+      assert(getTransform(tibia, tibiaFrame, endFrame, ros::Time(), ros::Duration(0.0)));
     }
     else
-      assert(getTransform(tarsus, endFrame, tarsusFrame, ros::Time(), ros::Duration(0.0)));
+      assert(getTransform(tarsus, tarsusFrame, endFrame, ros::Time(), ros::Duration(0.0)));
 
     // Get origin
     Eigen::Affine3d origin = tf2::transformToEigen(center.transform);
@@ -51,11 +51,6 @@ Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<
                              + tarsus.transform.translation.y * tarsus.transform.translation.y
                              + tarsus.transform.translation.z * tarsus.transform.translation.z);
 
-    ROS_INFO_STREAM("coxaLength: " << coxaLength);
-    ROS_INFO_STREAM("femurLength: " << femurLength);
-    ROS_INFO_STREAM("tibiaLength: " << tibiaLength);
-    ROS_INFO_STREAM("tarsusLength: " << tarsusLength);
-
     Eigen::Vector4d lengths;
     lengths[0] = coxaLength;
     lengths[1] = femurLength;
@@ -67,10 +62,27 @@ Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<
   }
 }
 
-std::vector<double> Bot::set_leg_position(int _index, Eigen::Vector3d &_point)
+std::vector<double> Bot::setLegPosition(int _id, const Eigen::Vector3d &_point)
 {
   std::vector<double> angles;
-  legs_[_index-1].getAnglesFromPoint(_point, angles);
+  legs_[_id].getAnglesFromPoint(_point, angles);
+  return angles;
+}
+
+std::vector<double> Bot::setLegPosition(const std::string &_id, const Eigen::Vector3d &_point)
+{
+  std::vector<double> angles;
+  std::shared_ptr<Leg> leg;
+  for(Leg entry : legs_)
+  {
+    if(entry.getName() == _id)
+    {
+      leg = std::make_shared<Leg>(entry);
+      break;
+    }
+  }
+  
+  if(leg) leg->getAnglesFromPoint(_point, angles);
   return angles;
 }
 

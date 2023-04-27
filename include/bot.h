@@ -29,8 +29,8 @@ class Bot
     Bot(const std::string &_name, const std::string &_frameId, const std::list<std::string> &_legIds, const double wait_for_tf_delay);
 
     // Methods
-    // std::vector<double> set_leg_position(std::string _id, Eigen::Vector3d &_point);
-    std::vector<double> set_leg_position(int _index, Eigen::Vector3d &_point);
+    std::vector<double> setLegPosition(const std::string &_id, const Eigen::Vector3d &_point);
+    std::vector<double> setLegPosition(int _index, const Eigen::Vector3d &_point);
     
     std::string getName() const;
 
