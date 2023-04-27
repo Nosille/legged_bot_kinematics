@@ -16,10 +16,15 @@ class Leg
 {
   public:
     Leg(const std::string &_name,
-        const Eigen::Vector4d &_origin,
+        const Eigen::Affine3d &_origin,
         const Eigen::Vector4d &_lengths 
        );
-    
+
+    Leg(const std::string &_name,
+        const Eigen::Vector4d &_origin,
+        const Eigen::Vector4d &_lengths 
+        );
+
     // Methods
     void getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles);
     void getPointFromAngles(std::map<std::string, double> &_angles, Eigen::Vector3d &_point);
@@ -27,7 +32,7 @@ class Leg
     std::map<std::string, double> getAnglesFromPoint(const Eigen::Vector3d &_point);
 
     std::string getName() const;
-    Eigen::Vector4d getOrigin() const;
+    Eigen::Affine3d getOrigin() const;
     Eigen::Vector4d getLengths() const;
 
   protected:
@@ -35,7 +40,7 @@ class Leg
     
     // Global Variables
     std::string name_;
-    Eigen::Vector4d origin_;
+    Eigen::Affine3d origin_;
     Eigen::Vector4d lengths_;
 
 }; // class Leg

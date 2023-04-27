@@ -35,17 +35,7 @@ Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<
       assert(getTransform(tarsus, endFrame, tarsusFrame, ros::Time(), ros::Duration(0.0)));
 
     // Get origin
-    Eigen::Vector4d origin;
-    tf2::Quaternion q;
-    tf2::convert(center.transform.rotation, q);
-    tf2::Matrix3x3 m(q);
-    double roll,pitch,yaw;
-    m.getRPY(roll,pitch,yaw);
-
-    origin[0] = center.transform.translation.x;
-    origin[1] = center.transform.translation.y;
-    origin[2] = center.transform.translation.z;
-    origin[3] = yaw;
+    Eigen::Affine3d origin = tf2::transformToEigen(center.transform);
 
     // Calculate Lengths
     double coxaLength = sqrt(coxa.transform.translation.x * coxa.transform.translation.x
