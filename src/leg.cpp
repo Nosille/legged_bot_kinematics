@@ -53,10 +53,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   Eigen::Vector3d point;
   point = origin_.inverse() * _point;
 
-  Eigen::Quaternion<double> q;
-  q = Eigen::AngleAxis<double>(yaw, Eigen::Vector3d(0.0, 0.0, 1.0));
-  Eigen::Vector3d vector = q.inverse() * point;
-
   // Coxa angle can be calculated at this point
   double coxa_angle = atan(point[1]/point[0]);
   _angles.push_back(coxa_angle);
