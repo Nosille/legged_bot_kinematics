@@ -42,7 +42,7 @@ Leg::Leg(const std::string &_name,
 void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles)
 {
   _angles.clear();
-  
+
   // lengths of each link
   double coxa_length = lengths_[0];
   double femur_length = lengths_[1];
@@ -52,10 +52,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   // Transform from body coordinate system to leg coordinate system
   Eigen::Vector3d point;
   point = origin_.inverse() * _point;
-
-  Eigen::Quaternion<double> q;
-  q = Eigen::AngleAxis<double>(yaw, Eigen::Vector3d(0.0, 0.0, 1.0));
-  Eigen::Vector3d vector = q.inverse() * point;
 
   // Coxa angle can be calculated at this point
   double coxa_angle = atan(point[1]/point[0]);
