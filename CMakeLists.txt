@@ -146,7 +146,7 @@ add_library(${PROJECT_NAME} src/bot.cpp src/leg.cpp src/joint.cpp)
 #   ${catkin_LIBRARIES}
 # )
 
-pybind_add_module(legged_bot_kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/joint.cpp)
+pybind_add_module(leg_kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/joint.cpp)
 # pybind_add_module(kinematics SHARED src/kinematicslib.cpp)
 
 # catkin_install_python(PROGRAMS scripts/test_leg.py
@@ -181,7 +181,7 @@ pybind_add_module(legged_bot_kinematics MODULE src/python_bridge.cpp src/bot.cpp
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-install(TARGETS legged_bot_kinematics
+install(TARGETS leg_kinematics
   LIBRARY DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

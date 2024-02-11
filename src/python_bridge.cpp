@@ -32,7 +32,7 @@ Eigen::Vector3d PyLeg::getPointFromAnglesPy(const pybind11::dict &_dict)
   return point;
 }
 
-PYBIND11_MODULE(legged_bot_kinematics, m) 
+PYBIND11_MODULE(leg_kinematics, m) 
 {
     pybind11::class_<PyBot>(m, "Bot")
         .def(pybind11::init<const std::string &, const std::string &, const std::list<std::string> &, const double &>(), pybind11::arg("name"), pybind11::arg("frame_id"), pybind11::arg("legIds"), pybind11::arg("wait_for_tf_delay") = 10)
