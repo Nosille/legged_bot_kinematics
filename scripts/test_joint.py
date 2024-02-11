@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from kinematics import Joint
+from legged_bot_kinematics import Joint
 
 if __name__ == '__main__':
     

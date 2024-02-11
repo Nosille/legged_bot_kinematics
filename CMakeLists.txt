@@ -114,7 +114,7 @@ find_package(catkin REQUIRED COMPONENTS ${PKG_DEPS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES kinematicslib
+  LIBRARIES legkinematicslib
   CATKIN_DEPENDS ${PKG_DEPS}
 )
 
@@ -146,7 +146,7 @@ include_directories(include
 #   ${catkin_LIBRARIES}
 # )
 
-pybind_add_module(kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/joint.cpp)
+pybind_add_module(legged_bot_kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/joint.cpp)
 # pybind_add_module(kinematics SHARED src/kinematicslib.cpp)
 
 # catkin_install_python(PROGRAMS scripts/test_leg.py
@@ -181,7 +181,7 @@ pybind_add_module(kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cp
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-install(TARGETS kinematics
+install(TARGETS legged_bot_kinematics
   LIBRARY DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

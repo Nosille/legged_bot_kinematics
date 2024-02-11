@@ -3,7 +3,7 @@
 import rospy
 import math
 import numpy as np
-from kinematics import Bot
+from legged_bot_kinematics import Bot
 # from legged_bot_kinematics import Leg
 from moveit_ros_planning_interface._moveit_roscpp_initializer import roscpp_init
 

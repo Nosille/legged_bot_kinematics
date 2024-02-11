@@ -3,7 +3,7 @@
 import rospy
 import math
 import numpy as np
-from kinematics import Leg
+from legged_bot_kinematics import Leg
 from geometry_msgs.msg import Pose
 
 
