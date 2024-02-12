@@ -1,3 +1,7 @@
+#include <vector>
+#include <iterator>
+#include <algorithm>
+
 #include "joint.h"
 
 /// @brief Constructor for Joint

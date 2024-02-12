@@ -1,13 +1,6 @@
 #pragma once
 
-
-#include <vector>
-
 #include <string>
-#include <iterator>
-#include <algorithm>
-
-#include <Eigen/Geometry> 
 
 /// @brief Class defining joint for legged robot
 class Joint

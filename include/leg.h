@@ -4,8 +4,6 @@
 #include <vector>
 #include <map> 
 #include <string>
-#include <iterator>
-#include <algorithm>
 
 #include <Eigen/Geometry> 
 

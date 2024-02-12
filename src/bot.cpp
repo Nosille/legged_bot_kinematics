@@ -1,3 +1,7 @@
+#include <iterator>
+#include <algorithm>
+#include <Eigen/Geometry> 
+
 #include "bot.h"
 
 Bot::Bot(const std::string &_name, const std::string &_FrameId, const std::list<std::string> &_legIds, const double _wait_for_tf_delay = 10)

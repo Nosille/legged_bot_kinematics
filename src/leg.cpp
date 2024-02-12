@@ -1,3 +1,9 @@
+
+#include <iterator>
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+
 #include "leg.h"
 
 /// @brief Constructor for Leg using eigen vectors
@@ -65,7 +71,7 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
 
   // Calculate position of tibia-tarsus joint 
   // assuming coxa is horizontal and tarsus is at selected slope
-  double xr = abs(point[0]) - coxa_length - tarsus_length * cos(tarsus_slope);
+  double xr = std::abs(point[0]) - coxa_length - tarsus_length * cos(tarsus_slope);
   double yr = point[1];
   double zr = point[2] - tarsus_length * sin(tarsus_slope);
 

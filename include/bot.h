@@ -2,12 +2,7 @@
 
 
 #include <vector>
-#include <map> 
 #include <string>
-#include <iterator>
-#include <algorithm>
-
-#include <Eigen/Geometry> 
 
 #include <ros/ros.h>
 #include <ros/console.h>
