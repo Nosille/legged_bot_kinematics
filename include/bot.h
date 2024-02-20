@@ -21,7 +21,8 @@
 class Bot
 {
   public:
-    Bot(const std::string &_name, const std::string &_frameId, const std::list<std::string> &_legIds, const double wait_for_tf_delay);
+    // Bot(const std::string &_name, const std::string &_frameId, const std::list<std::string> &_legIds, const double wait_for_tf_delay);
+    Bot(const std::string &_name, const std::list<Eigen::Vector4d> &_origin, const std::list<std::string> &_legIds, const std::list<double> &_legLengths);
 
     // Methods
     std::vector<double> setLegPosition(const std::string &_id, const Eigen::Vector3d &_point);
@@ -33,11 +34,11 @@ class Bot
     double PI = atan(1)*4;
     
     // ROS 
-    ros::NodeHandle nh_;
+    // ros::NodeHandle nh_;
 
-    std::shared_ptr<tf2_ros::Buffer> tfBuffer_;
-    std::shared_ptr<tf2_ros::TransformListener> tfListener_;
-    double wait_for_tf_delay_;
+    // std::shared_ptr<tf2_ros::Buffer> tfBuffer_;
+    // std::shared_ptr<tf2_ros::TransformListener> tfListener_;
+    // double wait_for_tf_delay_;
 
     // Global Variables
     std::string name_;
@@ -45,7 +46,7 @@ class Bot
     std::vector<Leg> legs_;
 
     // Methods
-    bool getTransform(geometry_msgs::TransformStamped &_transform, const std::string &_target_frame, const std::string &_source_frame, const ros::Time &_time, const ros::Duration &_wait_for_tf_delay);
+    // bool getTransform(geometry_msgs::TransformStamped &_transform, const std::string &_target_frame, const std::string &_source_frame, const ros::Time &_time, const ros::Duration &_wait_for_tf_delay);
   
 }; // class Bot
 

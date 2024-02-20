@@ -9,10 +9,10 @@ from geometry_msgs.msg import Pose
 
 if __name__ == '__main__':
     
-    pose = np.array([0.0, 0.073535, 0.0, math.pi/2])
+    origin= np.array([0.0, 0.073535, 0.0, math.pi/2])
     lengths = np.array([0.0450503, 0.07703, 0.123, 0.000])
  
-    leg = Leg("legLF", pose, lengths)
+    leg = Leg("LF", origin, lengths)
     print(leg.name)
 
     #inverse kinematics
