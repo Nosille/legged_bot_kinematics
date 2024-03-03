@@ -66,7 +66,16 @@
 //   }
 // }
 
-Bot::Bot(const std::string &_name, const std::list<Eigen::Vector4d> &_origins, const std::list<std::string> &_legIds, const std::list<double> &_legLengths)
+Bot::Bot(const std::string &_name, const std::list<Eigen::Vector3d> &_origin, const std::vector<Leg> &_leg)
+{
+  for(Leg leg : _leg)
+  {
+    legs_.push_back(leg);
+  }
+}
+    
+Bot::Bot(const std::string &_name, const std::list<Eigen::Vector3d> &_origins, const std::list<std::string> &_legIds, 
+         const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets)
 : name_(_name)
 {
   assert(_legIds.size() == _legLengths.size());
@@ -74,46 +83,46 @@ Bot::Bot(const std::string &_name, const std::list<Eigen::Vector4d> &_origins, c
   assert(_legIds.size() < 5);
   
   auto it1 = _origins.begin();
+  auto it2 = _legLengths.begin();
+  auto it3 = _jointOffsets.begin();
   for(std::string legId : _legIds)
   {
     // Get origin
-    Eigen::Vector4d origin = *it1;
+    Eigen::Vector3d origin = *it1;
     std::advance(it1, 1);
     
     // Get lengths
-    Eigen::Vector4d lengths;
-    auto it2 = _legLengths.begin();  lengths[0] = *it2;
-    std::advance(it2, 1);            lengths[1] = *it2;
-    std::advance(it2, 1);            lengths[2] = *it2;
-    if(_legIds.size() > 3) 
-    {
-      std::advance(it2, 1);          lengths[3] = *it2;
-    }
+    Eigen::Vector4d lengths = *it2;
+    std::advance(it2, 1);
+    
+    // Get offsets
+    Eigen::Vector4d offsets = *it3;
+    std::advance(it3, 1);
 
     // Create leg
-    Leg leg(legId, origin, lengths);
+    Leg leg(legId, origin, lengths, offsets);
     legs_.push_back(leg);
   }
 }
 
-std::vector<double> Bot::setLegPosition(int _id, const Eigen::Vector3d &_point)
+std::vector<double> Bot::setLegPosition(int _index, const Eigen::Vector3d &_point)
 {
   std::vector<double> angles;
-  Eigen::Affine3d origin = legs_[_id].getOrigin();
-  Eigen::Vector4d lengths = legs_[_id].getLengths();
-  ROS_WARN_STREAM(legs_[_id].getName() << ": " << origin(0,3) << "," << origin(1,3) << "," << origin(2,3));
+  Eigen::Affine3d origin = legs_[_index].getOrigin();
+  Eigen::Vector4d lengths = legs_[_index].getLengths();
+  ROS_WARN_STREAM(legs_[_index].getName() << ": " << origin(0,3) << "," << origin(1,3) << "," << origin(2,3));
   ROS_WARN_STREAM("Lengths: " << lengths[0] << "," << lengths[1] << "," << lengths[2]<< "," << lengths[3]);
-  legs_[_id].getAnglesFromPoint(_point, angles);
+  legs_[_index].getAnglesFromPoint(_point, angles);
   return angles;
 }
 
-std::vector<double> Bot::setLegPosition(const std::string &_id, const Eigen::Vector3d &_point)
+std::vector<double> Bot::setLegPosition(const std::string &_index, const Eigen::Vector3d &_point)
 {
   std::vector<double> angles;
   std::shared_ptr<Leg> leg;
   for(Leg entry : legs_)
   {
-    if(entry.getName() == _id)
+    if(entry.getName() == _index)
     {
       leg = std::make_shared<Leg>(entry);
       break;
@@ -122,6 +131,15 @@ std::vector<double> Bot::setLegPosition(const std::string &_id, const Eigen::Vec
   
   if(leg) leg->getAnglesFromPoint(_point, angles);
   return angles;
+}
+
+Eigen::Vector3d Bot::transform_pose(int _index, const Eigen::Vector3d &_pose, const Eigen::Vector3d &_translate, const Eigen::Quaterniond &_quaternion)
+{
+  Eigen::Affine3d transform(Eigen::Affine3d::Identity());
+  transform.translation() = _translate;
+  transform.linear() = _quaternion.toRotationMatrix();
+
+  return transform * _pose;
 }
 
 // bool Bot::getTransform(geometry_msgs::TransformStamped &_transform, const std::string &_target_frame, const std::string &_source_frame, const ros::Time &_time, const ros::Duration &_wait_for_tf_delay)

@@ -22,11 +22,14 @@ class Bot
 {
   public:
     // Bot(const std::string &_name, const std::string &_frameId, const std::list<std::string> &_legIds, const double wait_for_tf_delay);
-    Bot(const std::string &_name, const std::list<Eigen::Vector4d> &_origin, const std::list<std::string> &_legIds, const std::list<double> &_legLengths);
+    Bot(const std::string &_name, const std::list<Eigen::Vector3d> &_origin, const std::vector<Leg> &_leg);
+    Bot(const std::string &_name, const std::list<Eigen::Vector3d> &_origin, const std::list<std::string> &_legIds, 
+        const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets);
 
     // Methods
     std::vector<double> setLegPosition(const std::string &_id, const Eigen::Vector3d &_point);
     std::vector<double> setLegPosition(int _index, const Eigen::Vector3d &_point);
+    Eigen::Vector3d transform_pose(int _index, const Eigen::Vector3d &_pose, const Eigen::Vector3d &_translate, const Eigen::Quaterniond &_quaternion);
     
     std::string getName() const;
 

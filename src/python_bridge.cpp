@@ -35,7 +35,7 @@ Eigen::Vector3d PyLeg::getPointFromAnglesPy(const pybind11::dict &_dict)
 PYBIND11_MODULE(leg_kinematics, m) 
 {
     pybind11::class_<PyBot>(m, "Bot")
-        .def(pybind11::init<const std::string &, const std::list<Eigen::Vector4d> &, const std::list<std::string> &, const std::list<double> &>(), pybind11::arg("name"), pybind11::arg("origins"), pybind11::arg("legIds"), pybind11::arg("legLengths"))
+        .def(pybind11::init<const std::string &, const std::list<Eigen::Vector3d> &, const std::list<std::string> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &>(), pybind11::arg("name"), pybind11::arg("origins"), pybind11::arg("legIds"), pybind11::arg("legLengths"), pybind11::arg("jointOffsets"))
         .def("setLegPosition", static_cast<std::vector<double> (PyBot::*)(int, const Eigen::Vector3d &)>(&PyBot::setLegPosition), pybind11::arg("index"), pybind11::arg("point"), "Send Point get Angles")
         .def("setLegPosition", static_cast<std::vector<double> (PyBot::*)(const std::string &, const Eigen::Vector3d &)>(&PyBot::setLegPosition), pybind11::arg("id"), pybind11::arg("point"), "Send Point get Angles")
         .def_property_readonly("name", &PyBot::getName, "The bot's name")
@@ -44,7 +44,7 @@ PYBIND11_MODULE(leg_kinematics, m)
         });
 
     pybind11::class_<PyLeg>(m, "Leg")
-        .def(pybind11::init<const std::string &, const Eigen::Vector4d &, const Eigen::Vector4d &>(), pybind11::arg("name"), pybind11::arg("origin"), pybind11::arg("lengths"))
+        .def(pybind11::init<const std::string &, const Eigen::Vector3d &, const Eigen::Vector4d &, const Eigen::Vector4d &>(), pybind11::arg("name"), pybind11::arg("origin"), pybind11::arg("lengths"), pybind11::arg("offsets"))
         .def("getAnglesFromPoint", &PyLeg::getAnglesFromPointPy, "Send Point get Angles")
         .def("getPointFromAngles", &PyLeg::getPointFromAnglesPy, "Send Angles get Point")
         .def_property_readonly("name", &PyLeg::getName, "The leg's name")

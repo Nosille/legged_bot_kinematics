@@ -15,12 +15,14 @@ class Leg
   public:
     Leg(const std::string &_name,
         const Eigen::Affine3d &_origin,
-        const Eigen::Vector4d &_lengths 
+        const Eigen::Vector4d &_lengths,
+        const Eigen::Vector4d &_offsets
        );
 
     Leg(const std::string &_name,
-        const Eigen::Vector4d &_origin,
-        const Eigen::Vector4d &_lengths 
+        const Eigen::Vector3d &_origin,
+        const Eigen::Vector4d &_lengths,
+        const Eigen::Vector4d &_offsets         
         );
 
     // Methods
@@ -39,6 +41,7 @@ class Leg
     // Global Variables
     std::string name_;
     Eigen::Affine3d origin_;
+    Eigen::Vector4d offsets_;
     Eigen::Vector4d lengths_;
 
 }; // class Leg
