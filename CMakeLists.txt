@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(legged_bot_kinematics)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+## Compile as C++17 to get shared_mutex
+add_compile_options(-std=c++17)
 
 set(PKG_DEPS
   rospy  

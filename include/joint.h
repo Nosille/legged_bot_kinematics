@@ -1,31 +1,82 @@
 #pragma once
 
 #include <string>
+#include <iostream> 
+#include <shared_mutex> 
+#include <mutex> 
+#include <thread> 
 
-/// @brief Class defining joint for legged robot
+
+/// @brief Class defining a joint for a legged robot
 class Joint
 {
   public:
-    Joint(const std::string &_name, 
-          const double &_minAngle,
-          const double &_maxAngle,
-          const double &_maxRate);
+    /// @brief Constructor for Joint
+    /// @param _name = name of joint
+    /// @param _offset = offset of joint from straight when angle is zero
+    /// @param _minAngle = min allowed angle of joint in radians
+    /// @param _maxAngle = max allowed angle of joint in radians
+    /// @param _maxRate = max allowed angular rate of joint in radians/sec  
+    Joint(std::string _name, 
+          double _offset,
+          double _minAngle,
+          double _maxAngle,
+          double _maxRate);
 
-    // Methods
+    Joint(std::string _name,
+          const Joint& _oldJoint);
+
+    /// @brief Get name of Joint
+    /// @return name of joint
     std::string getName() const;
+
+    /// @brief Get offset of joint from straight when angle is zero
+    /// @return angle in radians
+    double getOffset() const;
+
+    /// @brief Get min allowed angle of joint
+    /// @return angle in radians
     double getMinAngle() const;
+
+    /// @brief Get max allowed angle of joint
+    /// @return angle in radians    
     double getMaxAngle() const;
+    
+    /// @brief Get max allowed rate of joint
+    /// @return angular rate in radians/sec    
     double getMaxRate() const;
 
-    void setMinAngle(double &_minAngle);
-    void setMaxAngle(double &_maxAngle);
-    void setMaxRate(double &_maxRate);
+    /// @brief Get current angle of joint
+    /// @return angle in radians
+    double getCurrentAngle() const;    
+
+    /// @brief Set offset of joint from straight when angle is zero
+    /// @return false if min > max
+    bool setOffset(double _minAngle);
+
+    /// @brief Set min allowed angle of joint
+    /// @return false if min > max
+    bool setMinAngle(double _minAngle);
+
+    /// @brief Set max allowed angle of joint
+    /// @return false if max < min   
+    bool setMaxAngle(double _maxAngle);
+
+    /// @brief Set max allowed rate of joint
+    /// @angular rate in radians/sec
+    bool setMaxRate(double _maxRate);
+
+    /// @brief Set current angle of joint
+    /// @return angular rate in radians/sec
+    bool setCurrentAngle(double _currentAngle);
 
   protected:
     
     // Global Variables
     std::string name_;
+    double offset_;
     double minAngle_;
     double maxAngle_;
     double maxRate_;
+    double currentAngle_;
 };

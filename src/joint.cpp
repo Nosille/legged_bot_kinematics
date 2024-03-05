@@ -1,50 +1,98 @@
+#include <cmath>
 #include <vector>
 #include <iterator>
 #include <algorithm>
 
 #include "joint.h"
 
-/// @brief Constructor for Joint
-/// @param _name name of joint
-/// @param _minAngle min allowed angle of joint in radians
-/// @param _maxAngle max allowed angle of joint in radians
-Joint::Joint(const std::string &_name, 
-             const double &_minAngle = -1.5708,
-             const double &_maxAngle = 1.5708,
-             const double &_maxRate = 6.0  
-        )
-        : name_(_name)
+// Constructors
+Joint::Joint(std::string _name,
+             double _offset = 0.0,
+             double _minAngle = -M_PI,
+             double _maxAngle = M_PI,
+             double _maxRate = 6.0
+            )
+            : name_(_name)
 {
-  minAngle_ = _minAngle;
-  maxAngle_ = _maxAngle;
-
-  maxRate_ = _maxRate;
+  offset_ = _offset;
+  minAngle_ = std::min(_minAngle, _maxAngle);
+  maxAngle_ = std::max(_minAngle, _maxAngle);
+  maxRate_  = _maxRate;
+  currentAngle_ = 0.0;
 }
 
-/// @brief Get name of Joint
-/// @return name of jont
-std::string Joint::getName() const { return name_; }
+Joint::Joint(std::string _name, const Joint &_oldJoint) 
+{
+  name_ = _oldJoint.getName();
 
-/// @brief Get min allowed angle of joint
-/// @return angle in radians
-double Joint::getMinAngle() const { return minAngle_; }
+  offset_ = _oldJoint.getOffset();
+  minAngle_ = _oldJoint.getMinAngle();
+  maxAngle_ = _oldJoint.getMaxAngle();
+  maxRate_  = _oldJoint.getMaxRate();
+  currentAngle_ = _oldJoint.getCurrentAngle();
+}
 
-/// @brief Get max allowed angle of joint
-/// @return angle in radians
-double Joint::getMaxAngle() const { return maxAngle_; }
+// Methods
+std::string Joint::getName() const 
+{ 
+  return name_; 
+}
 
-/// @brief Get max allowed rate of joint
-/// @return angular rate in radians/sec
-double Joint::getMaxRate() const { return maxRate_; }
+double Joint::getOffset() const 
+{ 
+  return offset_; 
+}
 
-/// @brief Set min allowed angle of joint
-/// @return angle in radians
-void Joint::setMinAngle(double &_minAngle) { minAngle_ = _minAngle; }
+double Joint::getMinAngle() const
+{ 
+  return minAngle_; 
+}
 
-/// @brief Set max allowed angle of joint
-/// @return angle in radians
-void Joint::setMaxAngle(double &_maxAngle) { maxAngle_ = _maxAngle; }
+double Joint::getMaxAngle() const
+{ 
+  return maxAngle_; 
+}
 
-/// @brief Set max allowed rate of joint
-/// @return angular rate in radians/sec
-void Joint::setMaxRate(double &_maxRate) { maxRate_ = _maxRate; }
+double Joint::getMaxRate() const
+{ 
+  return maxRate_; 
+}
+
+double Joint::getCurrentAngle() const
+{ 
+  return currentAngle_; 
+}
+
+bool Joint::setOffset(double _offset) 
+{ 
+  offset_ = _offset; 
+  return true;  
+}
+
+bool Joint::setMinAngle(double _minAngle) 
+{ 
+  if(_minAngle > maxAngle_) return false;
+
+  minAngle_ = _minAngle; 
+  return true;  
+}
+
+bool Joint::setMaxAngle(double _maxAngle) 
+{ 
+  if(_maxAngle < minAngle_) return false;
+
+  maxAngle_ = _maxAngle; 
+  return true;
+}
+
+bool Joint::setMaxRate(double _maxRate) 
+{ 
+  maxRate_ = _maxRate; 
+  return true;
+}
+
+bool Joint::setCurrentAngle(double _currentAngle) 
+{ 
+  currentAngle_ = _currentAngle; 
+  return true;
+}

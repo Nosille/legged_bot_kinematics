@@ -6,50 +6,71 @@
 
 #include "leg.h"
 
-/// @brief Constructor for Leg using eigen vectors
-/// @param _name name of leg
-/// @param _origin location of leg origin relative to body center in meters
-/// @param _lengths length of each leg member from origin to end (coxa, femur, tibia, tarsus)
+Leg::Leg(const std::string &_name, 
+         const Eigen::Affine3d &_origin,
+         const Eigen::Vector4d &_lengths,
+         const Eigen::Vector4d &_offsets,         
+         const std::vector<Joint> &_joints)
+        : name_(_name)
+{
+  origin_  = _origin;
+  lengths_ = _lengths;
+
+  for(Joint joint : _joints)
+  {
+    joints_.push_back(joint);
+  }
+  
+  while(joints_.size() < 4)
+  {
+    joints_.emplace_back(_name + std::to_string(joints_.size()), 0.0, -M_PI, M_PI, 5.23);
+  }
+}
+
 Leg::Leg(const std::string &_name,
          const Eigen::Affine3d &_origin,
          const Eigen::Vector4d &_lengths,
-         const Eigen::Vector4d &_offsets
+         const Eigen::Vector4d &_jointOffsets,
+         const Eigen::Vector4d &_jointMins,
+         const Eigen::Vector4d &_jointMaxs,
+         const Eigen::Vector4d &_jointRates
         )
         : name_(_name)
 {
   origin_  = _origin;
   lengths_ = _lengths;
-  offsets_ = _offsets;
+
+  joints_.emplace_back(_name + "_coxa",   _jointOffsets[0], _jointMins[0], _jointMaxs[0], _jointRates[0]);
+  joints_.emplace_back(_name + "_femur",  _jointOffsets[1], _jointMins[1], _jointMaxs[1], _jointRates[1]);
+  joints_.emplace_back(_name + "_tibia",  _jointOffsets[2], _jointMins[2], _jointMaxs[2], _jointRates[2]);
+  joints_.emplace_back(_name + "_tarsus", _jointOffsets[3], _jointMins[3], _jointMaxs[3], _jointRates[3]);
 }
 
-/// @brief Constructor for Leg using eigen vectors
-/// @param _name name of leg
-/// @param _origin location of leg origin relative to body center in meters and radians (x, y, z, yaw)
-/// @param _lengths length of each leg member from origin to end (coxa, femur, tibia, tarsus)
 Leg::Leg(const std::string &_name,
          const Eigen::Vector3d &_origin,
          const Eigen::Vector4d &_lengths,
-         const Eigen::Vector4d &_offsets
+         const Eigen::Vector4d &_jointOffsets,
+         const Eigen::Vector4d &_jointMins,
+         const Eigen::Vector4d &_jointMaxs,
+         const Eigen::Vector4d &_jointRates         
         )
         : name_(_name)
 {
-    Eigen::Vector3d vector(_origin[0], _origin[1], _origin[2]);
-    Eigen::Quaternion<double> q;
-    q = Eigen::AngleAxis<double>(_offsets[0], Eigen::Vector3d(0.0, 0.0, 1.0));
+  Eigen::Vector3d vector(_origin[0], _origin[1], _origin[2]);
+  Eigen::Quaternion<double> q;
+  q = Eigen::AngleAxis<double>(_jointOffsets[0], Eigen::Vector3d(0.0, 0.0, 1.0));
+  origin_ = Eigen::Affine3d::Identity();
+  origin_.translate(vector);
+  origin_ .rotate(q);
 
-    origin_ = Eigen::Affine3d::Identity();
-    origin_.translate(vector);
-    origin_ .rotate(q);
+  lengths_ = _lengths;
 
-    lengths_ = _lengths;
-    offsets_ = _offsets;
-    offsets_[0] = 0.0;
+  joints_.emplace_back(_name + "_coxa",                0.0, _jointMins[0], _jointMaxs[0], _jointRates[0]);
+  joints_.emplace_back(_name + "_femur",  _jointOffsets[1], _jointMins[1], _jointMaxs[1], _jointRates[1]);
+  joints_.emplace_back(_name + "_tibia",  _jointOffsets[2], _jointMins[2], _jointMaxs[2], _jointRates[2]);
+  joints_.emplace_back(_name + "_tarsus", _jointOffsets[3], _jointMins[3], _jointMaxs[3], _jointRates[3]);
 }
 
-
-/// @brief Inverse Kinematics
-/// @param _point x, y, z coordinates of foot in body coordinate system 
-/// @param _angles return vector of doubles containing joint angles in radians (coxa, femur, tibia, tarsus) 
 void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> &_angles)
 {
   _angles.clear();
@@ -61,10 +82,10 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   double tarsus_length = lengths_[3];
 
   // offsets of each joint
-  double coxa_offset = offsets_[0];
-  double femur_offset = offsets_[1];
-  double tibia_offset = offsets_[2];
-  double tarsus_offset = offsets_[3];
+  double coxa_offset = joints_[0].getOffset();
+  double femur_offset = joints_[1].getOffset();
+  double tibia_offset = joints_[2].getOffset();
+  double tarsus_offset = joints_[3].getOffset();
 
   // Transform from body coordinate system to leg coordinate system
   Eigen::Vector3d point;
@@ -115,9 +136,6 @@ void Leg::getAnglesFromPoint(const Eigen::Vector3d &_point, std::vector<double> 
   _angles.push_back(tarsus_angle - tarsus_offset);
 }
 
-/// @brief Inverse Kinematics
-/// @param _point x, y, z coordinates of foot in body coordinate system 
-/// @return map containing angles for each named joint (coxa, femur, tibia, tarsus)
 std::map<std::string, double> Leg::getAnglesFromPoint(const Eigen::Vector3d &_point)
 {
   // Get angles
@@ -134,10 +152,6 @@ std::map<std::string, double> Leg::getAnglesFromPoint(const Eigen::Vector3d &_po
   return map;
 }
 
-
-/// @brief Forward Kinematics
-/// @param _angles map containing angles for each named joint (coxa, femur, tibia, tarsus)
-/// @param _point return vector containing x, y, z coordinates of foot in body coordinate system
 void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vector3d &_point)
 {
   // lengths of each link
@@ -147,10 +161,10 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
   double tarsus_length = lengths_[3];
 
   // offsets of each joint
-  double coxa_offset = offsets_[0];
-  double femur_offset = offsets_[1];
-  double tibia_offset = offsets_[2];
-  double tarsus_offset = offsets_[3];
+  double coxa_offset = joints_[0].getOffset();
+  double femur_offset = joints_[1].getOffset();
+  double tibia_offset = joints_[2].getOffset();
+  double tarsus_offset = joints_[3].getOffset();
 
   // Calculate location of foot in the plane of the leg (2D, yz plane(y horizontal, z up))
   // get angles of each link relative to y-axis (about x-axis)
@@ -198,7 +212,6 @@ void Leg::getPointFromAngles(std::map<std::string,double> &_angles, Eigen::Vecto
   _point = origin_ * point;
 }
 
-
 /// @brief Get name of Leg
 /// @return name of leg
 std::string Leg::getName() const { return name_; }
@@ -210,3 +223,7 @@ Eigen::Affine3d Leg::getOrigin() const { return origin_; }
 /// @brief Get joint distances used in kinematics
 /// @return length in meters between joints from origin to end (coxa, femur, tibia, tarsus)
 Eigen::Vector4d Leg::getLengths() const { return lengths_; }
+
+/// @brief Get joints
+/// @return joints from origin to end (coxa, femur, tibia, tarsus)
+std::vector<Joint> Leg::getJoints() const { return joints_; }
