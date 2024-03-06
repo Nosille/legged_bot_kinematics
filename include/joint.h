@@ -13,11 +13,13 @@ class Joint
   public:
     /// @brief Constructor for Joint
     /// @param _name = name of joint
+    /// @param _length = length to next joint
     /// @param _offset = offset of joint from straight when angle is zero
     /// @param _minAngle = min allowed angle of joint in radians
     /// @param _maxAngle = max allowed angle of joint in radians
     /// @param _maxRate = max allowed angular rate of joint in radians/sec  
     Joint(std::string _name, 
+          double _length,
           double _offset,
           double _minAngle,
           double _maxAngle,
@@ -29,6 +31,10 @@ class Joint
     /// @brief Get name of Joint
     /// @return name of joint
     std::string getName() const;
+
+    /// @brief Get distance to next joint
+    /// @return angle in radians
+    double getLength() const;
 
     /// @brief Get offset of joint from straight when angle is zero
     /// @return angle in radians
@@ -50,9 +56,13 @@ class Joint
     /// @return angle in radians
     double getCurrentAngle() const;    
 
+    /// @brief Set distance to next joint
+    /// @return false if fails to set
+    bool setLength(double _length);
+
     /// @brief Set offset of joint from straight when angle is zero
     /// @return false if min > max
-    bool setOffset(double _minAngle);
+    bool setOffset(double _offset);
 
     /// @brief Set min allowed angle of joint
     /// @return false if min > max
@@ -74,6 +84,7 @@ class Joint
     
     // Global Variables
     std::string name_;
+    double length_;
     double offset_;
     double minAngle_;
     double maxAngle_;

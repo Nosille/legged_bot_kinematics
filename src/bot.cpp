@@ -69,8 +69,6 @@ const std::vector<Leg> Bot::getLegs()
 std::vector<double> Bot::setLegPosition(int _index, const Eigen::Vector3d &_point)
 {
   std::vector<double> angles;
-  Eigen::Affine3d origin = legs_[_index].getOrigin();
-  Eigen::Vector4d lengths = legs_[_index].getLengths();
   legs_[_index].getAnglesFromPoint(_point, angles);
   return angles;
 }
