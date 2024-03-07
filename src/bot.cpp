@@ -16,13 +16,18 @@ Bot::Bot(const std::string &_name, const std::vector<Leg> &_legs)
 Bot::Bot(const std::string &_name, const std::list<std::string> &_legIds, const std::list<Eigen::Vector3d> &_legOrigins, 
          const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets,
          const std::list<Eigen::Vector4d> &_jointMins, const std::list<Eigen::Vector4d> &_jointMaxs,
-         const std::list<Eigen::Vector4d> &_jointRates)
+         const std::list<Eigen::Vector4d> &_jointRates, 
+         const int _gait, const double _stepLength, const double _stepHeight)
 : name_(_name)
 {
   assert(_legIds.size() == _legLengths.size());
   assert(_legIds.size() > 2);
   assert(_legIds.size() < 5);
   
+  gait_ = _gait;
+  stepLength_ = _stepLength;
+  stepHeight_ = _stepHeight;
+
   auto it1 = _legOrigins.begin();
   auto it2 = _legLengths.begin();
   auto it3 = _jointOffsets.begin();
@@ -61,7 +66,7 @@ Bot::Bot(const std::string &_name, const std::list<std::string> &_legIds, const 
   }
 }
 
-const std::vector<Leg> Bot::getLegs()
+std::vector<Leg> Bot::getLegs() const
 {
   return legs_;
 }
@@ -90,6 +95,18 @@ std::vector<double> Bot::setLegPosition(const std::string &_index, const Eigen::
   return angles;
 }
 
+std::vector<std::vector<double>> Bot::setLegPositions(const std::vector<Eigen::Vector3d> &_positions)
+{
+  std::vector<std::vector<double>> angles;
+  
+  for(int i = 0; i < _positions.size(); i++)
+  {
+    angles[i] = setLegPosition(i, _positions[i]);
+  }
+
+  return angles;
+}
+
 Eigen::Vector3d Bot::transform_pose(int _index, const Eigen::Vector3d &_pose, const Eigen::Vector3d &_translate, const Eigen::Quaterniond &_quaternion)
 {
   Eigen::Affine3d transform(Eigen::Affine3d::Identity());
@@ -100,3 +117,24 @@ Eigen::Vector3d Bot::transform_pose(int _index, const Eigen::Vector3d &_pose, co
 }
 
 std::string Bot::getName() const { return name_; }
+
+int Bot::getGait() const { return gait_; }
+
+double Bot::getStepLength() const { return stepLength_; }
+
+double Bot::getStepHeight() const { return stepHeight_; }
+
+bool Bot::setGait(int _gait) 
+{
+  gait_ = _gait;
+}
+
+bool Bot::setStepLength(double _stepLength)
+{
+  stepLength_ = _stepLength;
+}
+
+bool Bot::setStepHeight(double _stepHeight)
+{
+  stepHeight_ = _stepHeight;
+}

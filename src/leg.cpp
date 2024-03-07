@@ -257,6 +257,18 @@ Eigen::Vector3d Leg::getCurrentPoint() const
   return Leg::getPointFromAngles(angles);
 }
 
+Eigen::Vector3d Leg::getDistance(const Eigen::Vector3d &_point)
+{
+  Eigen::Vector3d distance;
+  Eigen::Vector3d currentPoint = getCurrentPoint();
+
+  distance[0] = currentPoint[0] - _point[0];
+  distance[1] = currentPoint[1] - _point[1];
+  distance[2] = currentPoint[2] - _point[2];
+
+  return distance;
+}
+
 std::string Leg::getName() const { return name_; }
 
 Eigen::Affine3d Leg::getOrigin() const { return origin_; }

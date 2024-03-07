@@ -178,11 +178,18 @@ pybind11::dict PyLeg::getJointCurrentAnglesPy()
 PYBIND11_MODULE(leg_kinematics, m) 
 {
     pybind11::class_<PyBot>(m, "Bot")
-        .def(pybind11::init<const std::string &, const std::list<std::string> &, const std::list<Eigen::Vector3d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &>(), 
-                          pybind11::arg("name"),        pybind11::arg("legIds"),        pybind11::arg("legOrigins"),        pybind11::arg("legLengths"),      pybind11::arg("jointOffsets"),         pybind11::arg("jointMins"),         pybind11::arg("jointMaxs"),           pybind11::arg("jointRates"))
+        .def(pybind11::init<const std::string &, const std::list<std::string> &, const std::list<Eigen::Vector3d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &, const std::list<Eigen::Vector4d> &,           const int &,              const double &,          const double &>(), 
+                          pybind11::arg("name"),        pybind11::arg("legIds"),        pybind11::arg("legOrigins"),        pybind11::arg("legLengths"),      pybind11::arg("jointOffsets"),         pybind11::arg("jointMins"),         pybind11::arg("jointMaxs"),        pybind11::arg("jointRates"), pybind11::arg("gait"), pybind11::arg("stepLength"), pybind11::arg("stepHeight"))
         .def("setLegPosition", static_cast<std::vector<double> (PyBot::*)(int, const Eigen::Vector3d &)>(&PyBot::setLegPosition), pybind11::arg("index"), pybind11::arg("point"), "Send Point get Angles")
         .def("setLegPosition", static_cast<std::vector<double> (PyBot::*)(const std::string &, const Eigen::Vector3d &)>(&PyBot::setLegPosition), pybind11::arg("id"), pybind11::arg("point"), "Send Point get Angles")
+        .def("setLegPositions", static_cast<std::vector<std::vector<double>> (PyBot::*)(const std::vector<Eigen::Vector3d> &)>(&PyBot::setLegPositions), pybind11::arg("points"), "Send Points get Angles")
+        .def("setGait", &PyBot::setGait, "Set the bots gait")
+        .def("setStepLength", &PyBot::setStepLength, "Set the bots step length")
+        .def("setstepHeight", &PyBot::setStepHeight, "Set the bots step height")
         .def_property_readonly("name", &PyBot::getName, "The bot's name")
+        .def_property_readonly("gait", &PyBot::getGait, "The bot's current gait")
+        .def_property_readonly("stepLength", &PyBot::getStepLength, "The current step length")
+        .def_property_readonly("stepHeight", &PyBot::getStepHeight, "The current step height")
         .def("__repr__", [](const PyBot &bot) {
             return "<Bot named '" + bot.getName() + "'>";
         });

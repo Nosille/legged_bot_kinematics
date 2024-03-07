@@ -26,21 +26,34 @@ class Bot
     /// @param _jointMins minimum angle of each joint from encoder zero in radians
     /// @param _jointMaxs maximum angle of each joint from encoder zero in radians
     /// @param _jointRatess maximum angular rate of each joint in radians per second
+    /// @param _gait gait
+    /// @param _stepLength Length of each step in meters
+    /// @param _stepHeight Height of each step in meters
     Bot(const std::string &_name, const std::list<std::string> &_legIds, const std::list<Eigen::Vector3d> &_legOrigins, 
         const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets,
         const std::list<Eigen::Vector4d> &_jointMins, const std::list<Eigen::Vector4d> &_jointMaxs,
-        const std::list<Eigen::Vector4d> &_jointRates);
+        const std::list<Eigen::Vector4d> &_jointRates,
+        const int _gait, const double _stepLength, const double _stepHeight);
 
     // Methods
-    const std::vector<Leg> getLegs();
     std::vector<double> setLegPosition(const std::string &_id, const Eigen::Vector3d &_point);
     std::vector<double> setLegPosition(int _index, const Eigen::Vector3d &_point);
+    std::vector<std::vector<double>> setLegPositions(const std::vector<Eigen::Vector3d> &_positions);
     Eigen::Vector3d transform_pose(int _index, const Eigen::Vector3d &_pose, const Eigen::Vector3d &_translate, const Eigen::Quaterniond &_quaternion);
     
 
     /// @brief Get name of Bot
     /// @return name of bot
     std::string getName() const;
+    std::vector<Leg> getLegs() const;
+
+    int getGait() const;
+    double getStepLength() const;
+    double getStepHeight() const;
+
+    bool setGait(int _gait);
+    bool setStepLength(double _stepLength);
+    bool setStepHeight(double _stepHeight);
 
   protected:
     double PI = atan(1)*4;
@@ -49,6 +62,10 @@ class Bot
     std::string name_;
     std::string frame_id_;
     std::vector<Leg> legs_;
+  
+    int gait_;
+    double stepLength_;
+    double stepHeight_;
 
     // Methods
  

@@ -86,6 +86,10 @@ class Leg
     /// @return x, y, z coordinate of foot in body coordinate system
     Eigen::Vector3d getCurrentPoint() const;
 
+    /// @brief Get distance to point
+    /// @return x, y, z coordinate of foot in body coordinate system
+    Eigen::Vector3d getDistance(const Eigen::Vector3d &_point);
+
     /// @brief Get name of Leg
     /// @return name of leg
     std::string getName() const;
