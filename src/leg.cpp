@@ -269,6 +269,42 @@ Eigen::Vector3d Leg::getDistance(const Eigen::Vector3d &_point)
   return distance;
 }
 
+double Leg::getDistancexyz(const Eigen::Vector3d &_point)
+{
+  Eigen::Vector3d vector = getDistance(_point);
+
+  double distance = sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[1]*vector[1]);
+
+  return distance;
+}
+
+double Leg::getDistancexy(const Eigen::Vector3d &_point)
+{
+  Eigen::Vector3d vector = getDistance(_point);
+
+  double distance = sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
+
+  return distance;
+}
+
+double Leg::getDistancexz(const Eigen::Vector3d &_point)
+{
+  Eigen::Vector3d vector = getDistance(_point);
+
+  double distance = sqrt(vector[0]*vector[0] + vector[2]*vector[2]);
+
+  return distance;
+}
+
+double Leg::getDistanceyz(const Eigen::Vector3d &_point)
+{
+  Eigen::Vector3d vector = getDistance(_point);
+
+  double distance = sqrt(vector[1]*vector[1] + vector[2]*vector[2]);
+
+  return distance;
+}
+
 std::string Leg::getName() const { return name_; }
 
 Eigen::Affine3d Leg::getOrigin() const { return origin_; }
