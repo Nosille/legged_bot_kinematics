@@ -4,9 +4,14 @@
 
 #include "bot.h"
 
-Bot::Bot(const std::string &_name, const std::vector<Leg> &_legs)
+Bot::Bot(const std::string &_name, const std::vector<Leg> &_legs, 
+         const int _gait, const double _stepLength, const double _stepHeight)
 : name_(_name)
 {
+  gait_ = _gait;
+  stepLength_ = _stepLength;
+  stepHeight_ = _stepHeight;
+
   for(Leg leg : _legs)
   {
     legs_.push_back(leg);

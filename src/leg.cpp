@@ -162,10 +162,9 @@ void Leg::getPointFromAngles(const Eigen::Vector4d &_angles, Eigen::Vector3d &_p
 
   // Calculate location of foot in the plane of the leg (2D, yz plane(y horizontal, z up))
   // get angles of each link relative to y-axis (about x-axis)
-  double coxa_angle = 0.0;
-  coxa_angle += _angles[0] + coxa_offset; 
+  double coxa_slope = 0.0;
 
-  double femur_slope  = 0.0;
+  double femur_slope  = coxa_slope;
   femur_slope += _angles[1] + femur_offset; 
 
   double tibia_slope  = femur_slope;
@@ -191,6 +190,8 @@ void Leg::getPointFromAngles(const Eigen::Vector4d &_angles, Eigen::Vector3d &_p
   Eigen::Vector3d vector(xp, yp, zp);
 
   Eigen::Quaternion<double> q;
+  double coxa_angle = 0.0;
+  coxa_angle += _angles[0] + coxa_offset;   
   q = Eigen::AngleAxis<double>(coxa_angle, Eigen::Vector3d(0.0, 0.0, 1.0));
   Eigen::Vector3d point = q * vector;
 
@@ -319,6 +320,8 @@ void Leg::getJointLengths(Eigen::Vector4d &_lengths) const
   _lengths[2] = joints_[2].getLength();
   _lengths[3] = joints_[3].getLength();
 }
+
+float *
 
 void Leg::getJointOffsets(Eigen::Vector4d &_angles) const
 {

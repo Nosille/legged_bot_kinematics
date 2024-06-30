@@ -47,7 +47,7 @@ if __name__ == '__main__':
                   np.array([6.50, 6.50, 6.50, 6.50])]                 
                     
 
-    bot = Bot("jethexa", legIds, legOrigins, legLengths, jointOffsets, jointMins, jointMaxs, jointRates)
+    bot = Bot("jethexa", legIds, legOrigins, legLengths, jointOffsets, jointMins, jointMaxs, jointRates, 0, 0.05, 0.025)
     print(bot.name)
 
     print("setLegPosition_LF")

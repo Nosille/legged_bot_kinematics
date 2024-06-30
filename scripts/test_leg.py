@@ -11,7 +11,7 @@ if __name__ == '__main__':
     
     origin= np.array([0.0, 0.073535, 0.0])
     lengths = np.array([0.0450503, 0.07703, 0.123, 0.000])
-    offsets = np.array([math.pi/4, 0.0, -math.pi/2, -math.pi/2])
+    offsets = np.array([math.pi/2, 0.0, -math.pi/2, 0.000])
     jointMins = np.array([-2/3*math.pi, -2/3*math.pi, -2/3*math.pi, -2/3*math.pi])
     jointMaxs = np.array([+2/3*math.pi, +2/3*math.pi, +2/3*math.pi, +2/3*math.pi])
     jointRates = np.array([6.50, 6.50, 6.50, 6.50])

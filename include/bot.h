@@ -15,7 +15,8 @@ class Bot
     /// @brief Constructor for Bot using predefined legs
     /// @param _name = name of bot
     /// @param _legs = vector containing list of legs   
-    Bot(const std::string &_name, const std::vector<Leg> &_legs);
+    Bot(const std::string &_name, const std::vector<Leg> &_legs,
+        const int _gait, const double _stepLength, const double _stepHeight);
 
     /// @brief Constructor for Bot using eigen vectors
     /// @param _name = name of bot
