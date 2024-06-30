@@ -3,10 +3,10 @@
 #include <iterator>
 #include <algorithm>
 
-#include "joint.h"
+#include "segment.h"
 
 // Constructors
-Joint::Joint(std::string _name,
+Segment::Segment(std::string _name,
              double _length,
              double _offset = 0.0,
              double _minAngle = -M_PI,
@@ -23,55 +23,55 @@ Joint::Joint(std::string _name,
   currentAngle_ = 0.0;
 }
 
-Joint::Joint(std::string _name, const Joint &_oldJoint) 
+Segment::Segment(std::string _name, const Segment &_oldSegment) 
 {
-  name_ = _oldJoint.getName();
+  name_ = _oldSegment.getName();
 
-  length_ = _oldJoint.getLength();
-  offset_ = _oldJoint.getOffset();
-  minAngle_ = _oldJoint.getMinAngle();
-  maxAngle_ = _oldJoint.getMaxAngle();
-  maxRate_  = _oldJoint.getMaxRate();
-  currentAngle_ = _oldJoint.getCurrentAngle();
+  length_ = _oldSegment.getLength();
+  offset_ = _oldSegment.getOffset();
+  minAngle_ = _oldSegment.getMinAngle();
+  maxAngle_ = _oldSegment.getMaxAngle();
+  maxRate_  = _oldSegment.getMaxRate();
+  currentAngle_ = _oldSegment.getCurrentAngle();
 }
 
 // Methods
-std::string Joint::getName() const 
+std::string Segment::getName() const 
 { 
   return name_; 
 }
 
-double Joint::getLength() const 
+double Segment::getLength() const 
 { 
   return length_; 
 }
 
-double Joint::getOffset() const 
+double Segment::getOffset() const 
 { 
   return offset_; 
 }
 
-double Joint::getMinAngle() const
+double Segment::getMinAngle() const
 { 
   return minAngle_; 
 }
 
-double Joint::getMaxAngle() const
+double Segment::getMaxAngle() const
 { 
   return maxAngle_; 
 }
 
-double Joint::getMaxRate() const
+double Segment::getMaxRate() const
 { 
   return maxRate_; 
 }
 
-double Joint::getCurrentAngle() const
+double Segment::getCurrentAngle() const
 { 
   return currentAngle_; 
 }
 
-bool Joint::setLength(double _length) 
+bool Segment::setLength(double _length) 
 { 
   if(_length <= 0.0) return false;
 
@@ -79,7 +79,7 @@ bool Joint::setLength(double _length)
   return true;  
 }
 
-bool Joint::setOffset(double _offset) 
+bool Segment::setOffset(double _offset) 
 { 
   if(_offset < -M_PI) return false;
   if(_offset > +M_PI) return false;
@@ -88,7 +88,7 @@ bool Joint::setOffset(double _offset)
   return true;  
 }
 
-bool Joint::setMinAngle(double _minAngle) 
+bool Segment::setMinAngle(double _minAngle) 
 { 
   if(_minAngle < -M_PI) return false;
   if(_minAngle > maxAngle_) return false;
@@ -97,7 +97,7 @@ bool Joint::setMinAngle(double _minAngle)
   return true;  
 }
 
-bool Joint::setMaxAngle(double _maxAngle) 
+bool Segment::setMaxAngle(double _maxAngle) 
 { 
   if(_maxAngle > +M_PI) return false;
   if(_maxAngle < minAngle_) return false;
@@ -106,13 +106,13 @@ bool Joint::setMaxAngle(double _maxAngle)
   return true;
 }
 
-bool Joint::setMaxRate(double _maxRate) 
+bool Segment::setMaxRate(double _maxRate) 
 { 
   maxRate_ = _maxRate; 
   return true;
 }
 
-bool Joint::setCurrentAngle(double _currentAngle) 
+bool Segment::setCurrentAngle(double _currentAngle) 
 { 
   currentAngle_ = _currentAngle;
 

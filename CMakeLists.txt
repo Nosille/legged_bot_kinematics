@@ -138,7 +138,7 @@ include_directories(include
 # add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME} src/bot.cpp src/leg.cpp src/joint.cpp)
+add_library(${PROJECT_NAME} src/bot.cpp src/leg.cpp src/segment.cpp)
 # add_library(kinematicslib SHARED
 #   src/kinematicslib.cpp
 # )
@@ -146,7 +146,7 @@ add_library(${PROJECT_NAME} src/bot.cpp src/leg.cpp src/joint.cpp)
 #   ${catkin_LIBRARIES}
 # )
 
-pybind_add_module(leg_kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/joint.cpp)
+pybind_add_module(leg_kinematics MODULE src/python_bridge.cpp src/bot.cpp src/leg.cpp src/segment.cpp)
 # pybind_add_module(kinematics SHARED src/kinematicslib.cpp)
 
 # catkin_install_python(PROGRAMS scripts/test_leg.py

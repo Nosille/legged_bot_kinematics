@@ -23,17 +23,17 @@ class Bot
     /// @param _legIds = list of namse for each leg
     /// @param _origin = list of vectors for each leg origin relative to body center in meters
     /// @param _lengths = list of lengths of each leg member from origin to end in meters (coxa, femur, tibia, tarsus)
-    /// @param _jointOffsets offset of each joint from straight when encoder is at zero in radians
-    /// @param _jointMins minimum angle of each joint from encoder zero in radians
-    /// @param _jointMaxs maximum angle of each joint from encoder zero in radians
-    /// @param _jointRatess maximum angular rate of each joint in radians per second
+    /// @param _segmentOffsets offset of each segment from straight when encoder is at zero in radians
+    /// @param _segmentMins minimum angle of each segment from encoder zero in radians
+    /// @param _segmentMaxs maximum angle of each segment from encoder zero in radians
+    /// @param _segmentRatess maximum angular rate of each segment in radians per second
     /// @param _gait gait
     /// @param _stepLength Length of each step in meters
     /// @param _stepHeight Height of each step in meters
     Bot(const std::string &_name, const std::list<std::string> &_legIds, const std::list<Eigen::Vector3d> &_legOrigins, 
-        const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets,
-        const std::list<Eigen::Vector4d> &_jointMins, const std::list<Eigen::Vector4d> &_jointMaxs,
-        const std::list<Eigen::Vector4d> &_jointRates,
+        const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_segmentOffsets,
+        const std::list<Eigen::Vector4d> &_segmentMins, const std::list<Eigen::Vector4d> &_segmentMaxs,
+        const std::list<Eigen::Vector4d> &_segmentRates,
         const int _gait, const double _stepLength, const double _stepHeight);
 
     // Methods

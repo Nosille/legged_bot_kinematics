@@ -9,7 +9,7 @@
 
 #include "bot.h"
 #include "leg.h"
-#include "joint.h"
+#include "segment.h"
 
 class PyBot : public Bot
 {
@@ -25,21 +25,21 @@ class PyLeg : public Leg
     pybind11::dict getAnglesFromPointPy(const Eigen::Vector3d &_point);
     Eigen::Vector3d getPointFromAnglesPy(const pybind11::dict &_dict);
 
-    bool setJointLengthsPy(const pybind11::dict &_dict);
-    bool setJointOffsetsPy(const pybind11::dict &_dict);
-    bool setJointMinAnglesPy(const pybind11::dict &_dict);
-    bool setJointMaxAnglesPy(const pybind11::dict &_dict);
-    bool setJointCurrentAnglesPy(const pybind11::dict &_dict);
+    bool setSegmentLengthsPy(const pybind11::dict &_dict);
+    bool setSegmentOffsetsPy(const pybind11::dict &_dict);
+    bool setSegmentMinAnglesPy(const pybind11::dict &_dict);
+    bool setSegmentMaxAnglesPy(const pybind11::dict &_dict);
+    bool setSegmentCurrentAnglesPy(const pybind11::dict &_dict);
     
-    pybind11::dict getJointLengthsPy();
-    pybind11::dict getJointOffsetsPy();
-    pybind11::dict getJointMinAnglesPy();
-    pybind11::dict getJointMaxAnglesPy();
-    pybind11::dict getJointCurrentAnglesPy();
+    pybind11::dict getSegmentLengthsPy();
+    pybind11::dict getSegmentOffsetsPy();
+    pybind11::dict getSegmentMinAnglesPy();
+    pybind11::dict getSegmentMaxAnglesPy();
+    pybind11::dict getSegmentCurrentAnglesPy();
 };
 
-class PyJoint : public Joint
+class PySegment : public Segment
 {
   public:
-    using Joint::Joint;
+    using Segment::Segment;
 };

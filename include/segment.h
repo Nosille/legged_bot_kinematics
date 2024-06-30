@@ -7,76 +7,76 @@
 #include <thread> 
 
 
-/// @brief Class defining a joint for a legged robot
-class Joint
+/// @brief Class defining a Segment for a legged robot
+class Segment
 {
   public:
-    /// @brief Constructor for Joint
-    /// @param _name = name of joint
-    /// @param _length = length to next joint
-    /// @param _offset = offset of joint from straight when angle is zero
-    /// @param _minAngle = min allowed angle of joint in radians
-    /// @param _maxAngle = max allowed angle of joint in radians
-    /// @param _maxRate = max allowed angular rate of joint in radians/sec  
-    Joint(std::string _name, 
+    /// @brief Constructor for Segment
+    /// @param _name = name of Segment
+    /// @param _length = length to parent Segment
+    /// @param _offset = offset of Segment from straight when angle is zero
+    /// @param _minAngle = min allowed angle of Segment in radians
+    /// @param _maxAngle = max allowed angle of Segment in radians
+    /// @param _maxRate = max allowed angular rate of Segment in radians/sec  
+    Segment(std::string _name, 
           double _length,
           double _offset,
           double _minAngle,
           double _maxAngle,
           double _maxRate);
 
-    Joint(std::string _name,
-          const Joint& _oldJoint);
+    Segment(std::string _name,
+          const Segment& _oldSegment);
 
-    /// @brief Get name of Joint
-    /// @return name of joint
+    /// @brief Get name of Segment
+    /// @return name of Segment
     std::string getName() const;
 
-    /// @brief Get distance to next joint
+    /// @brief Get distance to next Segment
     /// @return angle in radians
     double getLength() const;
 
-    /// @brief Get offset of joint from straight when angle is zero
+    /// @brief Get offset of Segment from straight when angle is zero
     /// @return angle in radians
     double getOffset() const;
 
-    /// @brief Get min allowed angle of joint
+    /// @brief Get min allowed angle of Segment
     /// @return angle in radians
     double getMinAngle() const;
 
-    /// @brief Get max allowed angle of joint
+    /// @brief Get max allowed angle of Segment
     /// @return angle in radians    
     double getMaxAngle() const;
     
-    /// @brief Get max allowed rate of joint
+    /// @brief Get max allowed rate of Segment
     /// @return angular rate in radians/sec    
     double getMaxRate() const;
 
-    /// @brief Get current angle of joint
+    /// @brief Get current angle of Segment
     /// @return angle in radians
     double getCurrentAngle() const;    
 
-    /// @brief Set distance to next joint
+    /// @brief Set distance to next Segment
     /// @return false if fails to set
     bool setLength(double _length);
 
-    /// @brief Set offset of joint from straight when angle is zero
+    /// @brief Set offset of Segment from straight when angle is zero
     /// @return false if min > max
     bool setOffset(double _offset);
 
-    /// @brief Set min allowed angle of joint
+    /// @brief Set min allowed angle of Segment
     /// @return false if min > max
     bool setMinAngle(double _minAngle);
 
-    /// @brief Set max allowed angle of joint
+    /// @brief Set max allowed angle of Segment
     /// @return false if max < min   
     bool setMaxAngle(double _maxAngle);
 
-    /// @brief Set max allowed rate of joint
+    /// @brief Set max allowed rate of Segment
     /// @angular rate in radians/sec
     bool setMaxRate(double _maxRate);
 
-    /// @brief Set current angle of joint
+    /// @brief Set current angle of Segment
     /// @return angular rate in radians/sec
     bool setCurrentAngle(double _currentAngle);
 

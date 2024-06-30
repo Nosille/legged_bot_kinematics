@@ -19,9 +19,9 @@ Bot::Bot(const std::string &_name, const std::vector<Leg> &_legs,
 }
     
 Bot::Bot(const std::string &_name, const std::list<std::string> &_legIds, const std::list<Eigen::Vector3d> &_legOrigins, 
-         const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_jointOffsets,
-         const std::list<Eigen::Vector4d> &_jointMins, const std::list<Eigen::Vector4d> &_jointMaxs,
-         const std::list<Eigen::Vector4d> &_jointRates, 
+         const std::list<Eigen::Vector4d> &_legLengths, const std::list<Eigen::Vector4d> &_segmentOffsets,
+         const std::list<Eigen::Vector4d> &_segmentMins, const std::list<Eigen::Vector4d> &_segmentMaxs,
+         const std::list<Eigen::Vector4d> &_segmentRates, 
          const int _gait, const double _stepLength, const double _stepHeight)
 : name_(_name)
 {
@@ -35,10 +35,10 @@ Bot::Bot(const std::string &_name, const std::list<std::string> &_legIds, const 
 
   auto it1 = _legOrigins.begin();
   auto it2 = _legLengths.begin();
-  auto it3 = _jointOffsets.begin();
-  auto it4 = _jointMins.begin();
-  auto it5 = _jointMaxs.begin();
-  auto it6 = _jointRates.begin();
+  auto it3 = _segmentOffsets.begin();
+  auto it4 = _segmentMins.begin();
+  auto it5 = _segmentMaxs.begin();
+  auto it6 = _segmentRates.begin();
   for(std::string legId : _legIds)
   {
     // Get origin

@@ -21,25 +21,25 @@ if __name__ == '__main__':
                   np.array([0.0450503, 0.07703, 0.123, 0.000]),
                   np.array([0.0450503, 0.07703, 0.123, 0.000]),
                   np.array([0.0450503, 0.07703, 0.123, 0.000])]
-    jointOffsets = [np.array([+math.pi*1/4, 0.0, -math.pi/2, 0.0]), 
+    segmentOffsets = [np.array([+math.pi*1/4, 0.0, -math.pi/2, 0.0]), 
                     np.array([+math.pi*1/2, 0.0, -math.pi/2, 0.0]), 
                     np.array([+math.pi*3/4, 0.0, -math.pi/2, 0.0]), 
                     np.array([-math.pi*1/4, 0.0, -math.pi/2, 0.0]), 
                     np.array([-math.pi*1/2, 0.0, -math.pi/2, 0.0]), 
                     np.array([-math.pi*3/4, 0.0, -math.pi/2, 0.0])] 
-    jointMins = [np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
+    segmentMins = [np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
                  np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
                  np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
                  np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
                  np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3]),
                  np.array([-math.pi*2/3, -math.pi*2/3, -math.pi*2/3, -math.pi*2/3])]
-    jointMaxs = [np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
+    segmentMaxs = [np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
                  np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
                  np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
                  np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
                  np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3]),
                  np.array([+math.pi*2/3, +math.pi*2/3, +math.pi*2/3, +math.pi*2/3])]
-    jointRates = [np.array([6.50, 6.50, 6.50, 6.50]),
+    segmentRates = [np.array([6.50, 6.50, 6.50, 6.50]),
                   np.array([6.50, 6.50, 6.50, 6.50]),
                   np.array([6.50, 6.50, 6.50, 6.50]),
                   np.array([6.50, 6.50, 6.50, 6.50]),
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                   np.array([6.50, 6.50, 6.50, 6.50])]                 
                     
 
-    bot = Bot("jethexa", legIds, legOrigins, legLengths, jointOffsets, jointMins, jointMaxs, jointRates, 0, 0.05, 0.025)
+    bot = Bot("jethexa", legIds, legOrigins, legLengths, segmentOffsets, segmentMins, segmentMaxs, segmentRates, 0, 0.05, 0.025)
     print(bot.name)
 
     print("setLegPosition_LF")
