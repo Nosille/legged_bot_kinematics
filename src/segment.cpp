@@ -1,38 +1,42 @@
 #include <cmath>
-#include <vector>
-#include <iterator>
-#include <algorithm>
 
 #include "segment.h"
 
 // Constructors
 Segment::Segment(std::string _name,
-             double _length,
-             double _offset = 0.0,
-             double _minAngle = -M_PI,
-             double _maxAngle = M_PI,
-             double _maxRate = 6.0
+             float _length,
+             float _angleOffset = 0.0,
+             float _angleMin = -M_PI,
+             float _angleMax = M_PI,
+             float _angleRateMax = 6.0,
+             uint16_t _anglePrecisionFactor,
+             uint16_t _lengthPrecisionFactor
             )
             : name_(_name)
+            , anglePrecisionFactor_(_anglePrecisionFactor)
+            , lengthPrecisionFactor_(_anglePrecisionFactor)
 {
-  length_ = _length;
-  offset_ = _offset;
-  minAngle_ = std::min(_minAngle, _maxAngle);
-  maxAngle_ = std::max(_minAngle, _maxAngle);
-  maxRate_  = _maxRate;
-  currentAngle_ = 0.0;
+  length_ = _length * lengthPrecisionFactor_;
+  angleOffset_ = _angleOffset * anglePrecisionFactor_;
+  angleCurrent_ = 0.0;
+  angleMin_ = (std::min(_angleMin, _angleMax)) * anglePrecisionFactor_;
+  angleMax_ = (std::max(_angleMax, _angleMax)) * anglePrecisionFactor_;
+  angleRateMax_  = _angleRateMax  * anglePrecisionFactor_;
 }
 
 Segment::Segment(std::string _name, const Segment &_oldSegment) 
 {
   name_ = _oldSegment.getName();
 
-  length_ = _oldSegment.getLength();
-  offset_ = _oldSegment.getOffset();
-  minAngle_ = _oldSegment.getMinAngle();
-  maxAngle_ = _oldSegment.getMaxAngle();
-  maxRate_  = _oldSegment.getMaxRate();
-  currentAngle_ = _oldSegment.getCurrentAngle();
+  length_ = _oldSegment.length_;
+  angleOffset_ = _oldSegment.angleOffset_;
+  angleCurrent_ = _oldSegment.angleCurrent_;
+  angleMin_ = _oldSegment.angleMin_;
+  angleMax_ = _oldSegment.angleMax_;
+  angleRateMax_  = _oldSegment.angleRateMax_;
+
+  anglePrecisionFactor_ = _oldSegment.anglePrecisionFactor_;
+  lengthPrecisionFactor_= _oldSegment.lengthPrecisionFactor_;
 }
 
 // Methods
@@ -41,83 +45,134 @@ std::string Segment::getName() const
   return name_; 
 }
 
-double Segment::getLength() const 
+float Segment::getLength() const 
+{ 
+  return (float)length_ / lengthPrecisionFactor_; 
+}
+
+uint32_t Segment::getLengthAsInt() const
 { 
   return length_; 
 }
 
-double Segment::getOffset() const 
+float Segment::getAngleOffset() const 
 { 
-  return offset_; 
+  return (float)angleOffset_ / anglePrecisionFactor_; 
 }
 
-double Segment::getMinAngle() const
+int32_t Segment::getAngleOffsetAsInt() const
 { 
-  return minAngle_; 
+  return angleOffset_; 
 }
 
-double Segment::getMaxAngle() const
+float Segment::getAngleCurrent() const
 { 
-  return maxAngle_; 
+  return (float)angleCurrent_ / anglePrecisionFactor_; 
 }
 
-double Segment::getMaxRate() const
+int32_t Segment::getAngleCurrentAsInt() const
 { 
-  return maxRate_; 
+  return angleCurrent_;
 }
 
-double Segment::getCurrentAngle() const
+float Segment::getAngleMin() const
 { 
-  return currentAngle_; 
+  return (float)angleMin_ / anglePrecisionFactor_; 
 }
 
-bool Segment::setLength(double _length) 
+int32_t Segment::getAngleMinAsInt() const
+{ 
+  return angleMin_;
+}
+
+float Segment::getAngleMax() const
+{ 
+  return (float)angleMax_ / anglePrecisionFactor_; 
+}
+
+int32_t Segment::getAngleMaxAsInt() const
+{ 
+  return angleMax_;
+}
+
+float Segment::getAngleRateMax() const
+{ 
+  return (float)angleRateMax_ / anglePrecisionFactor_; 
+}
+
+uint32_t Segment::getAngleRateMaxAsInt() const
+{ 
+  return angleRateMax_; 
+}
+
+uint16_t Segment::getAnglePrecisionFactor() const
+{
+  return anglePrecisionFactor_;
+}
+
+uint16_t Segment::getLengthPrecisionFactor() const
+{
+  return lengthPrecisionFactor_;
+}
+
+bool Segment::setLength(float _length) 
 { 
   if(_length <= 0.0) return false;
 
-  length_ = _length; 
+  length_ = _length * lengthPrecisionFactor_; 
   return true;  
 }
 
-bool Segment::setOffset(double _offset) 
+bool Segment::setAngleOffset(float _angleOffset) 
 { 
-  if(_offset < -M_PI) return false;
-  if(_offset > +M_PI) return false;
+  if(_angleOffset < -M_PI) return false;
+  if(_angleOffset > +M_PI) return false;
   
-  offset_ = _offset; 
+  angleOffset_ = _angleOffset * anglePrecisionFactor_; 
   return true;  
 }
 
-bool Segment::setMinAngle(double _minAngle) 
+bool Segment::setAngleCurrent(float _angleCurrent) 
 { 
-  if(_minAngle < -M_PI) return false;
-  if(_minAngle > maxAngle_) return false;
+  if(_angleCurrent < angleMin_) return false;
+  if(_angleCurrent > angleMax_) return false;
 
-  minAngle_ = _minAngle; 
-  return true;  
-}
-
-bool Segment::setMaxAngle(double _maxAngle) 
-{ 
-  if(_maxAngle > +M_PI) return false;
-  if(_maxAngle < minAngle_) return false;
-
-  maxAngle_ = _maxAngle; 
+  angleCurrent_ = _angleCurrent * anglePrecisionFactor_;
   return true;
 }
 
-bool Segment::setMaxRate(double _maxRate) 
+bool Segment::setAngleMin(float _angleMin) 
 { 
-  maxRate_ = _maxRate; 
+  if(_angleMin < -M_PI) return false;
+  if(_angleMin > angleMax_) return false;
+
+  angleMin_ = _angleMin * anglePrecisionFactor_; 
+  return true;  
+}
+
+bool Segment::setAngleMax(float _angleMax) 
+{ 
+  if(_angleMax > +M_PI) return false;
+  if(_angleMax < angleMin_) return false;
+
+  angleMax_ = _angleMax * anglePrecisionFactor_; 
   return true;
 }
 
-bool Segment::setCurrentAngle(double _currentAngle) 
+bool Segment::setAngleRateMax(float _angleRateMax) 
 { 
-  currentAngle_ = _currentAngle;
+  angleRateMax_ = _angleRateMax * anglePrecisionFactor_; 
+  return true;
+}
 
-  if(_currentAngle < minAngle_) return false;
-  if(_currentAngle > maxAngle_) return false;
-  
+bool Segment::setAnglePrecisionFactor(uint16_t _factor) 
+{ 
+  anglePrecisionFactor_ = _factor; 
+  return true;
+}
+
+bool Segment::setLengthPrecisionFactor(uint16_t _factor) 
+{ 
+  lengthPrecisionFactor_ = _factor; 
   return true;
 }

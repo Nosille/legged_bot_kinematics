@@ -3,7 +3,7 @@
 import rospy
 import math
 import numpy as np
-from leg_kinematics import Bot
+from leg_kinematics import LeggedBot
 
 
 if __name__ == '__main__':
