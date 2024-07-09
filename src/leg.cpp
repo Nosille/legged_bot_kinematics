@@ -19,17 +19,24 @@ Leg::Leg(const std::string &_name,
   origin_  = _origin;
   originInv_  = _origin.inverse();
 
+  std::vector<float> anglesDefault;
   for(Segment segment : _segments)
   {
+    
     segment.setAnglePrecisionFactor(_anglePrecisionFactor);
     segment.setAnglePrecisionFactor(_lengthPrecisionFactor);
     segments_.push_back(segment);
+    anglesDefault.push_back(0.0f);
   }
   
   while(segments_.size() < 4)
   {
     segments_.emplace_back(_name + std::to_string(segments_.size()), 0.0, 0.0, -M_PI, M_PI, 10.0, _anglePrecisionFactor, _lengthPrecisionFactor);
   }
+
+  Eigen::Vector3f point;
+  calcPointFromAngles(anglesDefault, point);
+  setPositionHome(point);
 }
 
 Leg::Leg(const std::string &_name,
@@ -53,6 +60,10 @@ Leg::Leg(const std::string &_name,
   segments_.emplace_back(_name + "_femur",  _segmentLengths[1], _segmentOffsets[1], _segmentMins[1], _segmentMaxs[1], _segmentRates[1], _anglePrecisionFactor, _lengthPrecisionFactor);
   segments_.emplace_back(_name + "_tibia",  _segmentLengths[2], _segmentOffsets[2], _segmentMins[2], _segmentMaxs[2], _segmentRates[2], _anglePrecisionFactor, _lengthPrecisionFactor);
   segments_.emplace_back(_name + "_tarsus", _segmentLengths[3], _segmentOffsets[3], _segmentMins[3], _segmentMaxs[3], _segmentRates[3], _anglePrecisionFactor, _lengthPrecisionFactor);
+
+  Eigen::Vector4f anglesDefault;
+  Eigen::Vector3f point = calcPointFromAngles(anglesDefault);
+  setPositionHome(point);  
 }
 
 Leg::Leg(const std::string &_name,
@@ -84,6 +95,10 @@ Leg::Leg(const std::string &_name,
   segments_.emplace_back(_name + "_femur",  _segmentLengths[1], _segmentOffsets[1], _segmentMins[1], _segmentMaxs[1], _segmentRates[1], _anglePrecisionFactor, _lengthPrecisionFactor);
   segments_.emplace_back(_name + "_tibia",  _segmentLengths[2], _segmentOffsets[2], _segmentMins[2], _segmentMaxs[2], _segmentRates[2], _anglePrecisionFactor, _lengthPrecisionFactor);
   segments_.emplace_back(_name + "_tarsus", _segmentLengths[3], _segmentOffsets[3], _segmentMins[3], _segmentMaxs[3], _segmentRates[3], _anglePrecisionFactor, _lengthPrecisionFactor);
+
+  Eigen::Vector4f anglesDefault;
+  Eigen::Vector3f point = calcPointFromAngles(anglesDefault);
+  setPositionHome(point);    
 }
 
 Leg::Leg(const std::string &_name,
@@ -112,12 +127,17 @@ Leg::Leg(const std::string &_name,
   origin_  = origin;
   originInv_ = origin.inverse();
 
+  std::vector<float> anglesDefault;
   if(_count <= 4)
   {
     if(_count > 0) segments_.emplace_back(_name + "_coxa",   _segmentLengths[0], _segmentOffsets[0], _segmentMins[0], _segmentMaxs[0], _segmentRates[0], _anglePrecisionFactor, _lengthPrecisionFactor);
     if(_count > 1) segments_.emplace_back(_name + "_femur",  _segmentLengths[1], _segmentOffsets[1], _segmentMins[1], _segmentMaxs[1], _segmentRates[1], _anglePrecisionFactor, _lengthPrecisionFactor);
     if(_count > 2) segments_.emplace_back(_name + "_tibia",  _segmentLengths[2], _segmentOffsets[2], _segmentMins[2], _segmentMaxs[2], _segmentRates[2], _anglePrecisionFactor, _lengthPrecisionFactor);
     if(_count > 3) segments_.emplace_back(_name + "_tarsus", _segmentLengths[3], _segmentOffsets[3], _segmentMins[3], _segmentMaxs[3], _segmentRates[3], _anglePrecisionFactor, _lengthPrecisionFactor);
+    anglesDefault.push_back(0.0f);
+    anglesDefault.push_back(0.0f);
+    anglesDefault.push_back(0.0f);
+    anglesDefault.push_back(0.0f);    
   }
   else
   {
@@ -125,8 +145,13 @@ Leg::Leg(const std::string &_name,
     for(int i = 1; i < _count; i++)
     {
       segments_.emplace_back(_name + std::to_string(i), _segmentLengths[i], _segmentOffsets[i], _segmentMins[i], _segmentMaxs[i], _segmentRates[i]);
+      anglesDefault.push_back(0.0f);      
     }
   }
+
+  Eigen::Vector3f point;
+  calcPointFromAngles(anglesDefault, point);
+  setPositionHome(point);  
 }
 
 void Leg::calcAnglesFromPoint(const Eigen::Vector<int32_t, 3> &_point, std::vector<int32_t> &_angles) const

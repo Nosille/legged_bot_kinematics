@@ -16,6 +16,10 @@ LeggedBot::LeggedBot(const std::string &_name, const std::vector<Leg> &_legs,
   {
     legs_.push_back(leg);
   }
+
+  // Initialize base footprint
+  float height = legs_[0].getPositionHome()[2];
+  base_footprint_.translation()[2] = height;
 }
 
 LeggedBot::LeggedBot(const std::string &_name, const std::list<std::string> &_legIds, const std::list<Eigen::VectorXf> &_legOrigins, 
@@ -24,6 +28,7 @@ LeggedBot::LeggedBot(const std::string &_name, const std::list<std::string> &_le
          const std::list<Eigen::Vector4f> &_segmentRates, 
          const int _gait, const float _stepLength, const float _stepHeight)
 : name_(_name)
+, base_footprint_(Eigen::Affine3f::Identity())
 {
   assert(_legIds.size() == _legLengths.size());
   assert(_legIds.size() > 2);
@@ -42,7 +47,7 @@ LeggedBot::LeggedBot(const std::string &_name, const std::list<std::string> &_le
   for(std::string legId : _legIds)
   {
     // Get origin
-    Eigen::Vector3f origin = *it1;
+    Eigen::VectorXf origin = *it1;
     std::advance(it1, 1);
     
     // Get lengths
@@ -68,6 +73,10 @@ LeggedBot::LeggedBot(const std::string &_name, const std::list<std::string> &_le
     // Create leg
     Leg leg(legId, origin, lengths, offsets, mins, maxs, rates);
     legs_.push_back(leg);
+
+    // Initialize base footprint
+    float height = legs_[0].getPositionHome()[2];
+    base_footprint_.translation()[2] = height;
   }
 }
     
@@ -85,7 +94,7 @@ LeggedBot::LeggedBot(const std::string &_name, uint8_t _legs, uint8_t _segments,
   for(int i = 0; i < _legs; i++)
   {
     // Get origin
-    float origin[3] = {_legOrigins[i*3 + 0], _legOrigins[i*3 + 1], _legOrigins[i*3 + 2]};
+    float origin[6] = {_legOrigins[i*6 + 0], _legOrigins[i*6 + 1], _legOrigins[i*6 + 2], _legOrigins[i*6 + 3], _legOrigins[i*6 + 4], _legOrigins[i*6 + 5]};
 
     const std::string &legId = _legIds[i];
     const float* lengths = &_segmentLengths[i*_segments];
@@ -98,6 +107,10 @@ LeggedBot::LeggedBot(const std::string &_name, uint8_t _legs, uint8_t _segments,
     Leg leg(legId, origin, _segments, lengths, offsets, mins, maxs, rates);
     legs_.push_back(leg);
   }
+
+  // Initialize base footprint
+  float height = legs_[0].getPositionHome()[2];
+  base_footprint_.translation()[2] = height;  
 }
 
 std::vector<Leg> LeggedBot::getLegs() const
